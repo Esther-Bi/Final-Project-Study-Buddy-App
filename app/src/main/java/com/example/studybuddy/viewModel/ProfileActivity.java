@@ -32,17 +32,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -68,11 +60,6 @@ public class ProfileActivity extends AppCompatActivity {
     int hour, minute;
 
     private String userUID;
-
-    private String url = "http://" + "10.0.2.2" + ":" + 5000 + "/";
-    private String postBodyString;
-    private MediaType mediaType;
-    private RequestBody requestBody;
 
 
     @Override
@@ -149,17 +136,14 @@ public class ProfileActivity extends AppCompatActivity {
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox, FirebaseUser user, FirebaseFirestore database) {
         assert user != null;
         String userUID = user.getUid();
-//        without server
-//        database.collection("teachers").document(userUID).update("name" , textName,
-//                                                                "year" , textYear,
-//                                                                                 "degree" , textDegree,
-//                                                                                 "age" , textAge,
-//                                                                                 "gender" , textGender,
-//                                                                                  "phone" , textPhone,
-//                                                                                  "payBox" , textPayBox);
-//        Toast.makeText(ProfileActivity.this, "updated profile successfully", Toast.LENGTH_SHORT).show();
-        String data = "add_teacher:" + textName + "_" + textYear+ "_" + textDegree + "_" + textGender+ "_" + textAge + "_" + textPhone+ "_" + userUID;
-        postRequest(data, url);
+        database.collection("teachers").document(userUID).update("name" , textName,
+                                                                "year" , textYear,
+                                                                                 "degree" , textDegree,
+                                                                                 "age" , textAge,
+                                                                                 "gender" , textGender,
+                                                                                  "phone" , textPhone,
+                                                                                  "payBox" , textPayBox);
+        Toast.makeText(ProfileActivity.this, "updated profile successfully", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(ProfileActivity.this, MainActivity.class));
         finish();
     }
@@ -400,42 +384,4 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
-    private RequestBody buildRequestBody(String msg) {
-        postBodyString = msg;
-        mediaType = MediaType.parse("text/plain");
-        requestBody = RequestBody.create(postBodyString, mediaType);
-        return requestBody;
-    }
-
-
-    private void postRequest(String message, String URL) {
-        RequestBody requestBody = buildRequestBody(message);
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().post(requestBody).url(URL).build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(final Call call, final IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ProfileActivity.this, "Something went wrong:" + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        call.cancel();
-                    }
-                });
-            }
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Toast.makeText(ProfileActivity.this, response.body().string(), Toast.LENGTH_LONG).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-    }
 }

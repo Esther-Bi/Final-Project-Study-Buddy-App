@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.studybuddy.R;
 import com.example.studybuddy.model.StudentProfileModel;
+import com.example.studybuddy.objects.Student;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,15 +25,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import android.content.Intent;
-import java.io.IOException;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class StudentProfileActivity extends AppCompatActivity {
 
@@ -47,10 +40,6 @@ public class StudentProfileActivity extends AppCompatActivity {
 
     GoogleSignInClient googleSignInClient;
 
-    private String url = "http://" + "10.0.2.2" + ":" + 5000 + "/";
-    private String postBodyString;
-    private MediaType mediaType;
-    private RequestBody requestBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,12 +101,8 @@ public class StudentProfileActivity extends AppCompatActivity {
         assert user != null;
         String userUID = user.getUid();
 
-//        without server
-//        Student studentToAdd = new Student(textName, textYear, textDegree, textGender, textAge, textPhone, userUID); //creating a new user
-//        database.collection("students").document(userUID).set(studentToAdd); //adding user data to database
-
-        String data = "add_student:" + textName + "_" + textYear+ "_" + textDegree + "_" + textGender+ "_" + textAge + "_" + textPhone+ "_" + userUID;
-        postRequest(data, url);
+        Student studentToAdd = new Student(textName, textYear, textDegree, textGender, textAge, textPhone, userUID); //creating a new user
+        database.collection("students").document(userUID).set(studentToAdd); //adding user data to database
 
         startActivity(new Intent(StudentProfileActivity.this, MainActivity.class));
         finish();
@@ -170,45 +155,5 @@ public class StudentProfileActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    private RequestBody buildRequestBody(String msg) {
-        postBodyString = msg;
-        mediaType = MediaType.parse("text/plain");
-        requestBody = RequestBody.create(postBodyString, mediaType);
-        return requestBody;
-    }
-
-
-    private void postRequest(String message, String URL) {
-        RequestBody requestBody = buildRequestBody(message);
-        OkHttpClient okHttpClient = new OkHttpClient();
-        Request request = new Request.Builder().post(requestBody).url(URL).build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(final Call call, final IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(StudentProfileActivity.this, "Something went wrong:" + " " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        call.cancel();
-                    }
-                });
-            }
-            @Override
-            public void onResponse(Call call, final Response response) throws IOException {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Toast.makeText(StudentProfileActivity.this, response.body().string(), Toast.LENGTH_LONG).show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-    }
-
 
 }
