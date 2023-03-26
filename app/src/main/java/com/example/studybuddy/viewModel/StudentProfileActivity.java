@@ -100,7 +100,7 @@ public class StudentProfileActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
 
-        model.modelOnStart(name, age,year,degree, StudentProfileActivity.this);
+        model.modelOnStart(name, age,year,degree, phone_number, StudentProfileActivity.this);
     }
 
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, FirebaseUser user, FirebaseFirestore database) {

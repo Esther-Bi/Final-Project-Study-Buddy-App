@@ -1,5 +1,7 @@
 package com.example.studybuddy.model.api;
 
+import com.example.studybuddy.objects.Student;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -21,5 +23,11 @@ public interface API {
             @Field("age") String age,
             @Field("phone") String phone
     );
+
+    @GET("getStudentDetails")
+    Call<Student> getStudentDetails(
+            @Query("uid") String uid
+    );
+
 
 }
