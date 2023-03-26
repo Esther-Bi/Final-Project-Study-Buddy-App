@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.studybuddy.R;
 import com.example.studybuddy.model.StudentProfileModel;
+import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Student;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,6 +27,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import android.content.Intent;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class StudentProfileActivity extends AppCompatActivity {
@@ -101,8 +108,23 @@ public class StudentProfileActivity extends AppCompatActivity {
         assert user != null;
         String userUID = user.getUid();
 
-        Student studentToAdd = new Student(textName, textYear, textDegree, textGender, textAge, textPhone, userUID); //creating a new user
-        database.collection("students").document(userUID).set(studentToAdd); //adding user data to database
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateStudentDetails(userUID, textName, textYear, textDegree, textGender, textAge, textPhone);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("done", "done");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
+
+//        Student studentToAdd = new Student(textName, textYear, textDegree, textGender, textAge, textPhone, userUID); //creating a new user
+//        database.collection("students").document(userUID).set(studentToAdd); //adding user data to database
 
         startActivity(new Intent(StudentProfileActivity.this, MainActivity.class));
         finish();
