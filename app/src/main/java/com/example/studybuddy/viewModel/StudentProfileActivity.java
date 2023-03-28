@@ -96,6 +96,7 @@ public class StudentProfileActivity extends AppCompatActivity {
         model.modelOnStart(name, age,year,degree, StudentProfileActivity.this);
     }
 
+    //ngfrdtyktufyh
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, FirebaseUser user, FirebaseFirestore database) {
 
         assert user != null;
