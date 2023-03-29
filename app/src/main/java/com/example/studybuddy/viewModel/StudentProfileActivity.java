@@ -55,10 +55,7 @@ public class StudentProfileActivity extends AppCompatActivity {
 
         googleSignInClient= model.googleSignInClient();
 
-        FirebaseUser user = model.getUser();
-        String userUID = model.getUserUID();
         documentReference = model.getDocumentReference();
-
 
         name = findViewById(R.id.name);
         age = findViewById(R.id.age);
@@ -89,7 +86,7 @@ public class StudentProfileActivity extends AppCompatActivity {
                 }else if (textPhone.length() != 9){
                     Toast.makeText(StudentProfileActivity.this, "phone number is illegal", Toast.LENGTH_SHORT).show();
                 } else {
-                    updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone, user, db);
+                    updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone);
                     startActivity(new Intent(this, StudentHomeActivity.class));
                 }
             }
@@ -103,29 +100,9 @@ public class StudentProfileActivity extends AppCompatActivity {
         model.modelOnStart(name, age,year,degree, phone_number, StudentProfileActivity.this);
     }
 
-    //ngfrdtyktufyh
-    public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, FirebaseUser user, FirebaseFirestore database) {
+    public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone) {
 
-        assert user != null;
-        String userUID = user.getUid();
-
-        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateStudentDetails(userUID, textName, textYear, textDegree, textGender, textAge, textPhone);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
-                if(response.isSuccessful()){
-                    Log.d("done", "done");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
-            }
-        });
-
-//        Student studentToAdd = new Student(textName, textYear, textDegree, textGender, textAge, textPhone, userUID); //creating a new user
-//        database.collection("students").document(userUID).set(studentToAdd); //adding user data to database
+        model.updateProfileM(textName, textYear, textDegree, textGender, textAge, textPhone);
 
         startActivity(new Intent(StudentProfileActivity.this, MainActivity.class));
         finish();

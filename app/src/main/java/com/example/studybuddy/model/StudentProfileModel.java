@@ -1,24 +1,21 @@
 package com.example.studybuddy.model;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
 import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Student;
+import com.example.studybuddy.viewModel.MainActivity;
 import com.example.studybuddy.viewModel.StudentProfileActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import okhttp3.ResponseBody;
@@ -64,6 +61,7 @@ public class StudentProfileModel {
     }
 
     public void modelOnStart(EditText name, EditText age, EditText year, EditText degree, EditText phone_number, StudentProfileActivity thisactivity) {
+
         Call<Student> call = RetrofitClient.getInstance().getAPI().getStudentDetails(userUID);
         call.enqueue(new Callback<Student>() {
             @Override
@@ -90,24 +88,27 @@ public class StudentProfileModel {
             }
         });
 
-//        this.documentReference.get()
-//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if (task.getResult().exists()){
-//                            String nameResult = task.getResult().getString("name");
-//                            String ageResult = task.getResult().getString("age");
-//                            String yearResult = task.getResult().getString("year");
-//                            String degreeResult = task.getResult().getString("degree");
-//                            name.setText(nameResult);
-//                            age.setText(ageResult);
-//                            year.setText(yearResult);
-//                            degree.setText(degreeResult);
-//                        }else{
-//                            Toast.makeText(thisactivity, "no profile yet" , Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
     }
+
+    public void updateProfileM(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone) {
+
+        assert user != null;
+
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateStudentDetails(userUID, textName, textYear, textDegree, textGender, textAge, textPhone);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("done", "done");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
+
+    }
+
 }

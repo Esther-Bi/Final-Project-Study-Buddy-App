@@ -24,6 +24,18 @@ public interface API {
             @Field("phone") String phone
     );
 
+    @FormUrlEncoded
+    @POST("updateTeacherDetails")
+    Call<ResponseBody> updateTeacherDetails(
+            @Field("uid") String uid,
+            @Field("name") String name,
+            @Field("year") String year,
+            @Field("degree") String degree,
+            @Field("gender") String gender,
+            @Field("age") String age,
+            @Field("phone") String phone
+    );
+
     @GET("getStudentDetails")
     Call<Student> getStudentDetails(
             @Query("uid") String uid
