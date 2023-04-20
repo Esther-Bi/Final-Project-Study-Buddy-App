@@ -1,6 +1,7 @@
 package com.example.studybuddy.model.api;
 
 import com.example.studybuddy.objects.Student;
+import com.example.studybuddy.objects.Teacher;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -33,11 +34,30 @@ public interface API {
             @Field("degree") String degree,
             @Field("gender") String gender,
             @Field("age") String age,
-            @Field("phone") String phone
+            @Field("phone") String phone,
+            @Field("payBox") String payBox
+    );
+
+    @FormUrlEncoded
+    @POST("newTeacher")
+    Call<ResponseBody> newTeacher(
+            @Field("uid") String uid,
+            @Field("name") String name,
+            @Field("year") String year,
+            @Field("degree") String degree,
+            @Field("gender") String gender,
+            @Field("age") String age,
+            @Field("phone") String phone,
+            @Field("payBox") String payBox
     );
 
     @GET("getStudentDetails")
     Call<Student> getStudentDetails(
+            @Query("uid") String uid
+    );
+
+    @GET("getTeacherDetails")
+    Call<Teacher> getTeacherDetails(
             @Query("uid") String uid
     );
 

@@ -42,8 +42,6 @@ public class StudentProfileActivity extends AppCompatActivity {
     Button save;
     RadioGroup gender_group;
     RadioButton gender;
-    DocumentReference documentReference;
-    FirebaseFirestore db = model.getDb();
 
     GoogleSignInClient googleSignInClient;
 
@@ -54,8 +52,6 @@ public class StudentProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_profile);
 
         googleSignInClient= model.googleSignInClient();
-
-        documentReference = model.getDocumentReference();
 
         name = findViewById(R.id.name);
         age = findViewById(R.id.age);
@@ -96,14 +92,12 @@ public class StudentProfileActivity extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
-
         model.modelOnStart(name, age,year,degree, phone_number, StudentProfileActivity.this);
     }
 
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone) {
 
-        model.updateProfileM(textName, textYear, textDegree, textGender, textAge, textPhone);
-
+        model.updateProfileModel(textName, textYear, textDegree, textGender, textAge, textPhone);
         startActivity(new Intent(StudentProfileActivity.this, MainActivity.class));
         finish();
     }

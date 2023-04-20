@@ -1,6 +1,5 @@
 package com.example.studybuddy.viewModel;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import com.example.studybuddy.model.FirstTeacherLoginModel;
 import com.example.studybuddy.objects.Teacher;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import android.content.Intent;
 
@@ -30,7 +28,6 @@ public class FirstTeacherLoginActivity extends AppCompatActivity {
     RadioGroup gender_group;
     RadioButton gender;
     DocumentReference documentReference;
-    FirebaseFirestore db = model.getDb();
 
     private String userUID;
 
@@ -39,10 +36,6 @@ public class FirstTeacherLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_teacher_login);
-
-        FirebaseUser user = model.getUser();
-        userUID= model.getUserUID();
-        documentReference = model.getDocumentReference();
 
 
         name = findViewById(R.id.name);
@@ -73,7 +66,7 @@ public class FirstTeacherLoginActivity extends AppCompatActivity {
             }else if (textPhone.length() != 9){
                 Toast.makeText(FirstTeacherLoginActivity.this, "phone number is illegal", Toast.LENGTH_SHORT).show();
             } else {
-                updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox, user, db);
+                updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox);
                 startActivity(new Intent(FirstTeacherLoginActivity.this, ProfileActivity.class));
                 finish();
             }
@@ -83,38 +76,12 @@ public class FirstTeacherLoginActivity extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
-
-        model.modelOnStart(name, age,year,degree, FirstTeacherLoginActivity.this);
-
-//        documentReference.get()
-//                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                        if (task.getResult().exists()){
-//                            String nameResult = task.getResult().getString("name");
-//                            String ageResult = task.getResult().getString("age");
-//                            String yearResult = task.getResult().getString("year");
-//                            String degreeResult = task.getResult().getString("degree");
-//                            name.setText(nameResult);
-//                            age.setText(ageResult);
-//                            year.setText(yearResult);
-//                            degree.setText(degreeResult);
-//                        }else{
-//                            Toast.makeText(FirstTeacherLoginActivity.this, "no profile yet" , Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
     }
 
-    public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox, FirebaseUser user, FirebaseFirestore database) {
+    public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox) {
 
-        assert user != null;
-        String userUID = user.getUid();
+        model.newTeacherModel(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox);
 
-        Teacher teacherToAdd = new Teacher(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox, userUID); //creating a new user
-        database.collection("teachers").document(userUID).set(teacherToAdd); //adding user data to database
-
-        Toast.makeText(FirstTeacherLoginActivity.this, "Updated Profile successfully", Toast.LENGTH_SHORT).show();
     }
 
 }

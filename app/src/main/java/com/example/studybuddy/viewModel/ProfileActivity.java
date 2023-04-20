@@ -44,7 +44,7 @@ public class ProfileActivity extends AppCompatActivity {
     Button save, add_courses, add_dates;
     RadioGroup gender_group;
     RadioButton gender;
-    DocumentReference documentReference;
+//    DocumentReference documentReference;
     FirebaseFirestore db = model.getDb();
 
     private AlertDialog.Builder dialogBuilder;
@@ -70,9 +70,8 @@ public class ProfileActivity extends AppCompatActivity {
         googleSignInClient= model.googleSignInClient();
 
         FirebaseUser user = model.getUser();
-        userUID= model.getUserUID();
-        documentReference = model.getDocumentReference();
-
+//        userUID= model.getUserUID();
+//        documentReference = model.getDocumentReference();
 
         name = findViewById(R.id.name);
         age = findViewById(R.id.age);
@@ -119,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }else if (textPhone.length() != 9){
                     Toast.makeText(ProfileActivity.this, "phone number is illegal", Toast.LENGTH_SHORT).show();
                 } else {
-                    updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox, user, db);
+                    updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox);
                     startActivity(new Intent(this, HomeActivity.class));
                 }
             }
@@ -133,19 +132,22 @@ public class ProfileActivity extends AppCompatActivity {
         model.modelOnStart(name, age,year,degree, ProfileActivity.this);
     }
 
-    public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox, FirebaseUser user, FirebaseFirestore database) {
-        assert user != null;
-        String userUID = user.getUid();
-        database.collection("teachers").document(userUID).update("name" , textName,
-                                                                "year" , textYear,
-                                                                                 "degree" , textDegree,
-                                                                                 "age" , textAge,
-                                                                                 "gender" , textGender,
-                                                                                  "phone" , textPhone,
-                                                                                  "payBox" , textPayBox);
-        Toast.makeText(ProfileActivity.this, "updated profile successfully", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-        finish();
+    public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox) {
+
+        model.updateProfileModel(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox);
+
+//        assert user != null;
+//        String userUID = user.getUid();
+//        database.collection("teachers").document(userUID).update("name" , textName,
+//                                                                "year" , textYear,
+//                                                                                 "degree" , textDegree,
+//                                                                                 "age" , textAge,
+//                                                                                 "gender" , textGender,
+//                                                                                  "phone" , textPhone,
+//                                                                                  "payBox" , textPayBox);
+//        Toast.makeText(ProfileActivity.this, "updated profile successfully", Toast.LENGTH_SHORT).show();
+//        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+//        finish();
     }
 
     @Override

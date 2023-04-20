@@ -26,17 +26,11 @@ public class StudentProfileModel {
 
 
     private Activity activity;
-    private String userUID;
-    private DocumentReference documentReference;
     private FirebaseUser user;
-    private FirebaseFirestore db;
 
 
     public StudentProfileModel (Activity activity){
         this.activity = activity;
-        this.db = FirebaseFirestore.getInstance();
-        this.userUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        this.documentReference = db.collection("students").document(userUID);
         this.user  = FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -44,25 +38,9 @@ public class StudentProfileModel {
         return GoogleSignIn.getClient(this.activity, GoogleSignInOptions.DEFAULT_SIGN_IN);
     }
 
-    public FirebaseFirestore getDb() {
-        return db;
-    }
-
-    public String getUserUID() {
-        return userUID;
-    }
-
-    public DocumentReference getDocumentReference() {
-        return documentReference;
-    }
-
-    public FirebaseUser getUser() {
-        return user;
-    }
-
     public void modelOnStart(EditText name, EditText age, EditText year, EditText degree, EditText phone_number, StudentProfileActivity thisactivity) {
 
-        Call<Student> call = RetrofitClient.getInstance().getAPI().getStudentDetails(userUID);
+        Call<Student> call = RetrofitClient.getInstance().getAPI().getStudentDetails(user.getUid());
         call.enqueue(new Callback<Student>() {
             @Override
             public void onResponse(Call<Student> call, Response<Student> response) {
@@ -90,11 +68,11 @@ public class StudentProfileModel {
 
     }
 
-    public void updateProfileM(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone) {
+    public void updateProfileModel(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone) {
 
         assert user != null;
 
-        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateStudentDetails(userUID, textName, textYear, textDegree, textGender, textAge, textPhone);
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateStudentDetails(user.getUid(), textName, textYear, textDegree, textGender, textAge, textPhone);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
