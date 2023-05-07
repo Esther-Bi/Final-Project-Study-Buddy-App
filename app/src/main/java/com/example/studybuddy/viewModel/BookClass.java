@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,26 +25,32 @@ import android.widget.Toast;
 import com.example.studybuddy.R;
 import com.example.studybuddy.adapter.TeacherAdapter;
 import com.example.studybuddy.model.BookClassModel;
+import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Teacher;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BookClass extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     BookClassModel model = new BookClassModel(this);
-    private static final String TAG = "MyBookClass";
 
     ListView listView;
     private Spinner coursesSpinner, fromHourSpinner, toHourSpinner;
     private Button start_filter, datesButton;
 
     private DatePickerDialog datePickerDialog;
+    ArrayList<Teacher> filteredTeachers = new ArrayList<Teacher>();
 
     GoogleSignInClient googleSignInClient;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +90,7 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
         });
 
         setupData();
-        setUpList();
+//        setUpList();
 
         start_filter.setOnClickListener(v -> {
             if (model.getCourseValueFromSpinner().equals("choose course")){
@@ -99,11 +106,24 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
 
     private void initFilteredTeachers(){
 
-        model.modelInitFilteredTeachers();
+        Call<ArrayList<Teacher>> call = RetrofitClient.getInstance().getAPI().getFilteredTeachers(model.getCourseValueFromSpinner(), model.getDateValueFromButton(), model.getFromHourValueFromSpinner(), model.getToHourValueFromSpinner());
+        call.enqueue(new Callback<ArrayList<Teacher>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Teacher>> call, Response<ArrayList<Teacher>> response) {
+                filteredTeachers = response.body();
+                if( filteredTeachers == null){
+                    filteredTeachers = new ArrayList<Teacher>();
+                }
+                TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, filteredTeachers);
+                adapter.notifyDataSetChanged();
+                listView.setAdapter(adapter);
+            }
 
-        TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, model.getFilteredTeachers());
-        adapter.notifyDataSetChanged();
-        listView.setAdapter(adapter);
+            @Override
+            public void onFailure(Call<ArrayList<Teacher>> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
     }
 
     private void initSearchWidgets()
@@ -121,7 +141,7 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
             {
                 model.modelonQueryTextChange(s);
 
-                TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, model.getFilteredShapes());
+                TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, model.getFilteredTeachers());
                 adapter.notifyDataSetChanged();
                 listView.setAdapter(adapter);
 
@@ -145,6 +165,7 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
 
     private void setUpOnclickListener()
     {
+        listView = (ListView) findViewById(R.id.teachersListView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)

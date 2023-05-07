@@ -62,6 +62,7 @@ public class StudentPaymentModel {
         });
     }
 
+    //
     public Query buildClassQuery(String field){
         return this.classesRef.whereEqualTo(field, this.userID).whereEqualTo("past","yes");
     }

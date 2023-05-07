@@ -56,7 +56,7 @@ public class StudentMyPaymentActivity extends AppCompatActivity implements Recyc
         model.updatePastCourses();
 
     }
-
+    //
     private void setUpRecyclerView() {
         Query query = model.buildClassQuery("student");
         FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()

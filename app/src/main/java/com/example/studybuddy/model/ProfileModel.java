@@ -80,9 +80,9 @@ public class ProfileModel {
     }
 
     public void updateData(String date_and_time) {
-//        db.collection("teachers")
-//                .document(user.getUid())
-//                .update("dates", FieldValue.arrayUnion(date_and_time));
+        db.collection("teachers")
+                .document(user.getUid())
+                .update("dates", FieldValue.arrayUnion(date_and_time));
     }
 
     public void updateProfileModel(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox){
