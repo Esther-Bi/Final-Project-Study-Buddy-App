@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.studybuddy.R;
 import com.example.studybuddy.model.ProfileModel;
+import com.example.studybuddy.model.api.RetrofitClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,6 +36,11 @@ import android.content.Intent;
 
 import java.util.Calendar;
 import java.util.Locale;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ProfileActivity extends AppCompatActivity {
@@ -368,17 +375,35 @@ public class ProfileActivity extends AppCompatActivity {
                     Toast.makeText(ProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
                 } else {
                     String course_grade_price = course + " - " + grade + " - " + price + " ₪";
-                    db.collection("teachers")
-                            .document(userUID)
-                            .update("courses", FieldValue.arrayUnion(course));
-                    db.collection("teachers")
-                            .document(userUID)
-                            .update("grades", FieldValue.arrayUnion(Integer.parseInt(grade)));
-                    db.collection("teachers")
-                            .document(userUID)
-                            .update("prices", FieldValue.arrayUnion(Integer.parseInt(price)));
+//                    db.collection("teachers")
+//                            .document(userUID)
+//                            .update("courses", FieldValue.arrayUnion(course));
+//                    db.collection("teachers")
+//                            .document(userUID)
+//                            .update("grades", FieldValue.arrayUnion(Integer.parseInt(grade)));
+//                    db.collection("teachers")
+//                            .document(userUID)
+//                            .update("prices", FieldValue.arrayUnion(Integer.parseInt(price)));
 
-                    Toast.makeText(ProfileActivity.this, course_grade_price + " have been added successfully", Toast.LENGTH_SHORT).show();
+                    Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().addCourseAndGradeToTeacher(model.getUser().getUid(), course, grade, price);
+                    call.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                            if(response.isSuccessful()){
+                                Log.d("done", "done");
+                                String course_grade_price = course + " - " + grade + " - " + price + " ₪";
+                                Toast.makeText(ProfileActivity.this, course_grade_price + " have been added successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Log.d("Failed to add course", t.getMessage());
+                            Toast.makeText(ProfileActivity.this, "error in adding new course to teach", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+//                    Toast.makeText(ProfileActivity.this, course_grade_price + " have been added successfully", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }
             }

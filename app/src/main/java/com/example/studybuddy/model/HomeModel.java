@@ -34,21 +34,21 @@ public class HomeModel {
     }
 
     public Query buildClassQuery(String field){
-        Call<Query> call = RetrofitClient.getInstance().getAPI().getClassQuery(userID);
-        call.enqueue(new Callback<Query>() {
-            @Override
-            public void onResponse(Call<Query> call, Response<Query> response) {
-                query = response.body();
-                Log.d("check meeee", query.toString());
-
-            }
-            @Override
-            public void onFailure(Call<Query> call, Throwable t) {
-                Log.d("failed phone", t.getMessage());
-            }
-        });
-        return this.query;
-        //return this.classesRef.whereEqualTo(field, this.userID);
+//        Call<Query> call = RetrofitClient.getInstance().getAPI().getClassQuery(userID);
+//        call.enqueue(new Callback<Query>() {
+//            @Override
+//            public void onResponse(Call<Query> call, Response<Query> response) {
+//                query = response.body();
+//                Log.d("check meeee", query.toString());
+//
+//            }
+//            @Override
+//            public void onFailure(Call<Query> call, Throwable t) {
+//                Log.d("failed phone", t.getMessage());
+//            }
+//        });
+//        return this.query;
+        return this.classesRef.whereEqualTo(field, this.userID);
     }
 
     public GoogleSignInClient googleSignInClient() {

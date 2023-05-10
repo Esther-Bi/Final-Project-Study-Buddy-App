@@ -53,7 +53,6 @@ public class ProfileModel {
     }
 
     public void modelOnStart(EditText name, EditText age, EditText year, EditText degree, ProfileActivity thisactivity) {
-
         Call<Teacher> call = RetrofitClient.getInstance().getAPI().getTeacherDetails(user.getUid());
         call.enqueue(new Callback<Teacher>() {
             @Override
@@ -80,9 +79,22 @@ public class ProfileModel {
     }
 
     public void updateData(String date_and_time) {
-        db.collection("teachers")
-                .document(user.getUid())
-                .update("dates", FieldValue.arrayUnion(date_and_time));
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().addDateToTeacher(user.getUid(), date_and_time);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("done", "done");
+                    Toast.makeText(activity, date_and_time + " have been added successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Failed to add date", t.getMessage());
+                Toast.makeText(activity, "error in adding new available date", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void updateProfileModel(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox){

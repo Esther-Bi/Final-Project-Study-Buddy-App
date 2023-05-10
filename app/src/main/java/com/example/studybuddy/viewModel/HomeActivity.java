@@ -56,44 +56,44 @@ public class HomeActivity extends AppCompatActivity implements RecyclerViewInter
     }
 
     private void setUpRecyclerView() {
-        Call<Query> call = RetrofitClient.getInstance().getAPI().getClassQuery(model.userID);
-        call.enqueue(new Callback<Query>() {
-            @Override
-            public void onResponse(Call<Query> call, Response<Query> response) {
-                Query query = response.body();
-                Log.d("check meeee", query.toString());
-                FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()
-                        .setQuery(query, Class.class)
-                        .build();
-                Log.d("check meeeeeeeeee", query.toString());
-
-                adapter = new ClassAdapter(options, HomeActivity.this);
-
-                RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-                recyclerView.setAdapter(adapter);
-                adapter.startListening();
-            }
-            @Override
-            public void onFailure(Call<Query> call, Throwable t) {
-                Log.d("failed phone", t.getMessage());
-            }
-        });
-
-//        Query query = model.buildClassQuery("teacher");
-//        FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()
-//                .setQuery(query, Class.class)
-//                .build();
-//        Log.d("check meeeeeeeeee", query.toString());
+//        Call<Query> call = RetrofitClient.getInstance().getAPI().getClassQuery(model.userID);
+//        call.enqueue(new Callback<Query>() {
+//            @Override
+//            public void onResponse(Call<Query> call, Response<Query> response) {
+//                Query query = response.body();
+//                Log.d("check meeee", query.toString());
+//                FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()
+//                        .setQuery(query, Class.class)
+//                        .build();
+//                Log.d("check meeeeeeeeee", query.toString());
 //
-//        adapter = new ClassAdapter(options, HomeActivity.this);
+//                adapter = new ClassAdapter(options, HomeActivity.this);
 //
-//        RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
-//        recyclerView.setHasFixedSize(true);
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(adapter);
-//        adapter.startListening();
+//                RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
+//                recyclerView.setHasFixedSize(true);
+//                recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
+//                recyclerView.setAdapter(adapter);
+//                adapter.startListening();
+//            }
+//            @Override
+//            public void onFailure(Call<Query> call, Throwable t) {
+//                Log.d("failed phone", t.getMessage());
+//            }
+//        });
+
+        Query query = model.buildClassQuery("teacher");
+        FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()
+                .setQuery(query, Class.class)
+                .build();
+        Log.d("check meeeeeeeeee", query.toString());
+
+        adapter = new ClassAdapter(options, HomeActivity.this);
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
     }
 
     @Override
