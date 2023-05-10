@@ -63,7 +63,7 @@ public class MyAvailableDatesActivity extends AppCompatActivity {
         setData();
     }
 
-    private void setData(){
+    public void setData(){
         model.modelSetData();
         add_available_dates.setOnClickListener(v -> {
             createPopup();

@@ -21,12 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-
-
     private GoogleSignInClient googleSignInClient;
-
     private static final String TAG = "GOOGLE_SIGN_IN_TAG";
-
     MainModel model = new MainModel(this, FirebaseAuth.getInstance());
 
     ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(

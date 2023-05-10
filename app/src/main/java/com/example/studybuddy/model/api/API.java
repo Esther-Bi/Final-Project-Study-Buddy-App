@@ -5,6 +5,8 @@ import com.example.studybuddy.objects.Teacher;
 
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -51,6 +53,54 @@ public interface API {
             @Field("age") String age,
             @Field("phone") String phone,
             @Field("payBox") String payBox
+    );
+
+    @FormUrlEncoded
+    @POST("addCourseAndGradeToTeacher")
+    Call<ResponseBody> addCourseAndGradeToTeacher(
+            @Field("uid") String uid,
+            @Field("course") String course,
+            @Field("grade") String grade,
+            @Field("price") String price
+    );
+
+    @FormUrlEncoded
+    @POST("deleteCourseAndGradeFromTeacher")
+    Call<ResponseBody> deleteCourseAndGradeFromTeacher(
+            @Field("uid") String uid,
+            @Field("course") String course
+    );
+
+    @FormUrlEncoded
+    @POST("addDateToTeacher")
+    Call<ResponseBody> addDateToTeacher(
+            @Field("uid") String uid,
+            @Field("date") String date
+    );
+
+    @FormUrlEncoded
+    @POST("deleteDateFromTeacher")
+    Call<ResponseBody> deleteDateFromTeacher(
+            @Field("uid") String uid,
+            @Field("date") String date
+    );
+
+    @FormUrlEncoded
+    @POST("deleteClassTeacher")
+    Call<ResponseBody> deleteClassTeacher(
+            @Field("uid") String uid,
+            @Field("name") String name,
+            @Field("subject") String subject,
+            @Field("date") String date
+    );
+
+    @FormUrlEncoded
+    @POST("deleteClassStudent")
+    Call<ResponseBody> deleteClassStudent(
+            @Field("uid") String uid,
+            @Field("name") String name,
+            @Field("subject") String subject,
+            @Field("date") String date
     );
 
     @GET("getStudentDetails")
@@ -113,9 +163,39 @@ public interface API {
             @Query("subject") String subject
     );
 
+    @GET("getTeacherCourses")
+    Call<ArrayList<String>> getTeacherCourses(
+            @Query("uid") String uid
+    );
 
+    @GET("getTeacherGrades")
+    Call<ArrayList<Integer>> getTeacherGrades(
+            @Query("uid") String uid
+    );
 
+    @GET("getTeacherDates")
+    Call<ArrayList<String>> getTeacherDates(
+            @Query("uid") String uid
+    );
 
+    @GET("getStudentMobileNumber")
+    Call<String> getStudentMobileNumber(
+            @Query("uid") String uid,
+            @Query("name") String name,
+            @Query("subject") String subject,
+            @Query("date") String date
+    );
 
+    @GET("getClassQuery")
+    Call<com.google.firebase.firestore.Query> getClassQuery(
+            @Query("uid") String uid
+    );
 
+    @GET("getTeacherMobileNumber")
+    Call<String> getTeacherMobileNumber(
+            @Query("uid") String uid,
+            @Query("name") String name,
+            @Query("subject") String subject,
+            @Query("date") String date
+    );
 }

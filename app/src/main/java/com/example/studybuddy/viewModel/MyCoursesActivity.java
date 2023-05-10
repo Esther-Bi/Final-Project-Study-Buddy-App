@@ -130,11 +130,7 @@ public class MyCoursesActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(course) || TextUtils.isEmpty(grade) || TextUtils.isEmpty(price)) {
                     Toast.makeText(MyCoursesActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
                 } else {
-                    String course_grade_price = course + " - " + grade + " - " + price + " ₪";
                     model.updateDataBase(course, grade, price);
-
-                    Toast.makeText(MyCoursesActivity.this, course_grade_price + " have been added successfully", Toast.LENGTH_SHORT).show();
-                    setData();
                     dialog.dismiss();
                 }
             }
@@ -149,12 +145,12 @@ public class MyCoursesActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
             {
                 HashMap<String, String> item = (HashMap<String, String>) resultsListView.getItemAtPosition(position);
-                deleteQuestionPopup(item.get("Course") , item.get("Grade"));
+                deleteQuestionPopup(item.get("Course"));
             }
         });
     }
 
-    public void deleteQuestionPopup(String course, String grade) {
+    public void deleteQuestionPopup(String course) {
         dialogBuilder = new AlertDialog.Builder(this);
         final View popupView = getLayoutInflater().inflate(R.layout.delete_question_popup, null);
 
@@ -173,10 +169,7 @@ public class MyCoursesActivity extends AppCompatActivity {
             public void onClick(View view) {
                 dialog.dismiss();
                 Log.d(TAG, "delete course");
-                model.yes_click(course, grade);
-
-                Toast.makeText(MyCoursesActivity.this, "course have been deleted successfully", Toast.LENGTH_SHORT).show();
-                setData();
+                model.yes_click(course);
             }
         });
 

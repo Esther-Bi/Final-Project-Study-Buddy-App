@@ -34,7 +34,7 @@ import com.google.firebase.firestore.Query;
 
 
 public class StudentHomeActivity extends AppCompatActivity implements RecyclerViewInterface {
-    StudentHomeModel model = new StudentHomeModel(this, FirebaseAuth.getInstance().getCurrentUser().getUid(), "classes", "students", "teachers");
+    StudentHomeModel model = new StudentHomeModel(this, FirebaseAuth.getInstance().getCurrentUser().getUid(), "classes");
     private StudentClassAdapter adapter;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -73,6 +73,7 @@ public class StudentHomeActivity extends AppCompatActivity implements RecyclerVi
         super.onStart();
         adapter.startListening();
     }
+    //try another on Start
 
     @Override
     protected void onStop() {
