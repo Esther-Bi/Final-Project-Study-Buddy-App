@@ -86,5 +86,36 @@ public interface API {
             @Field("teacherID") String teacherID
     );
 
+    @FormUrlEncoded
+    @POST("updateRate")
+    Call<ResponseBody> updateRate(
+            @Field("uid") String uid,
+            @Field("teacherName") String teacherName,
+            @Field("date") String date,
+            @Field("subject") String subject,
+            @Field("rating") Double rating
+    );
+
+    @FormUrlEncoded
+    @POST("approveYes")
+    Call<ResponseBody> approveYes(
+            @Field("uid") String uid,
+            @Field("teacherName") String teacherName,
+            @Field("date") String date,
+            @Field("subject") String subject
+    );
+
+    @GET("approvePayment")
+    Call<String> approvePayment(
+            @Query("uid") String uid,
+            @Query("teacherName") String teacherName,
+            @Query("date") String date,
+            @Query("subject") String subject
+    );
+
+
+
+
+
 
 }

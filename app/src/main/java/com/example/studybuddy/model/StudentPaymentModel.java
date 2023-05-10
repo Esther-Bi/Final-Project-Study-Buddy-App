@@ -1,11 +1,16 @@
 package com.example.studybuddy.model;
 
+import static java.lang.Integer.parseInt;
+
+import android.util.Log;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Class;
+import com.example.studybuddy.objects.Teacher;
 import com.example.studybuddy.viewModel.StudentMyPaymentActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -22,7 +27,13 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class StudentPaymentModel {
     private StudentMyPaymentActivity activity;
@@ -96,76 +107,61 @@ public class StudentPaymentModel {
                 });
     }
 
-    public void onApprovePayment(String name, String subject, String date) {
-        classesRef.whereEqualTo("student" , this.userID)
-                .whereEqualTo("teacherName" , name).whereEqualTo("subject" , subject)
-                .whereEqualTo("date" , date).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            if(documentSnapshot.exists()){
-                                Class curr = documentSnapshot.toObject(Class.class);
-                                if (curr.getStudentApproval() == 1) {
-                                    Toast.makeText(activity, "you already paid", Toast.LENGTH_SHORT).show();
-                                } else{
-                                    activity.approvePaymentQuestionPopup(name, subject, date);
-                                }
-                            }
-                        }
-                    }
-                });
+    public void onApprovePayment(String teacherName, String subject, String date) {
+
+        Call<String> call = RetrofitClient.getInstance().getAPI().approvePayment(this.userID,  teacherName, date, subject);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String getStudentApproval = response.body();
+                if (parseInt(getStudentApproval) == 1) {
+                    Toast.makeText(activity, "you already paid", Toast.LENGTH_SHORT).show();
+                } else{
+                    activity.approvePaymentQuestionPopup(teacherName, subject, date);
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
     }
 
-    public void approve_click_yes(String name, String date, String subject) {
-        this.classesRef.whereEqualTo("student" , this.userID)
-                .whereEqualTo("teacherName" , name).whereEqualTo("subject" , subject)
-                .whereEqualTo("date" , date)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            if(documentSnapshot.exists()){
-                                String dbKey = documentSnapshot.getId();
-                                classesRef.document(dbKey).update("studentApproval" , 1);
-                                Toast.makeText(activity, "paid successfully", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
+    public void approve_click_yes(String teacherName, String date, String subject) {
+
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().approveYes(this.userID,  teacherName, date, subject);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Toast.makeText(activity, "paid successfully", Toast.LENGTH_SHORT).show();
+                    Log.d("done", "done");
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
     }
 
 
-    public void rate_click_save(String name, String date, String subject, RatingBar rt) {
-        this.classesRef.whereEqualTo("student" , this.userID)
-                .whereEqualTo("teacherName" , name).whereEqualTo("subject" , subject)
-                .whereEqualTo("date" , date).whereEqualTo("studentApproval" , 1)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            if(documentSnapshot.exists()){
-                                String teacherID = documentSnapshot.getString("teacher");
-                                teachersRef.document(teacherID)
-                                        .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                if (task.isSuccessful()){
-                                                    DocumentSnapshot document = task.getResult();
-                                                    if (document.exists()) {
-                                                        String rating = String.valueOf(rt.getRating());
-                                                        DecimalFormat df = new DecimalFormat("#.###");
-                                                        double curr_rating  = Double.valueOf(df.format((Double) document.get("rating")));
-                                                        double new_rating = Double.valueOf(df.format((curr_rating+Double.parseDouble(rating))/2.0));
-                                                        teachersRef.document(teacherID).update("rating",new_rating);
-                                                    }
-                                                }
-                                            }
-                                        });
+    public void rate_click_save(String teacherName, String date, String subject, RatingBar rt) {
 
-                            }
-                        }
-                    }
-                });
+        double rating = rt.getRating();
+
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateRate(this.userID,  teacherName, date, subject, rating);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("done", "done");
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
     }
 }
