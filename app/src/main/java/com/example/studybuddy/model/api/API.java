@@ -1,5 +1,6 @@
 package com.example.studybuddy.model.api;
 
+import com.example.studybuddy.objects.Group;
 import com.example.studybuddy.objects.Student;
 import com.example.studybuddy.objects.Teacher;
 
@@ -197,5 +198,17 @@ public interface API {
             @Query("name") String name,
             @Query("subject") String subject,
             @Query("date") String date
+    );
+
+    @GET("getMyGroups")
+    Call<ArrayList<Group>> getMyGroups(
+            @Query("uid") String uid
+    );
+
+    @FormUrlEncoded
+    @POST("deleteFromGroup")
+    Call<ResponseBody> deleteFromGroup(
+            @Field("uid") String uid,
+            @Field("groupId") String groupId
     );
 }

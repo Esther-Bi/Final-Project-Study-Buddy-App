@@ -32,6 +32,13 @@
         android:theme="@style/Theme.StudyBuddy"
         android:usesCleartextTraffic="true">
         <activity
+            android:name="com.example.studybuddy.viewModel.GroupHomeActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name="com.example.studybuddy.viewModel.StudentMyPaymentActivity"
             android:exported="false">
             <meta-data

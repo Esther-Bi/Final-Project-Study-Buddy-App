@@ -8,4 +8,5 @@ public interface RecyclerViewInterface {
     void onWhatsAppMessageClick(String name, String subject, String date);
     void onPayForClassClick(String name, String subject, String date);
     void onApprovePaymentForClassClick(String name, String subject, String date);
+//    void onEditGroupClick();
 }

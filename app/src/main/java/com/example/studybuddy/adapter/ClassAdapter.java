@@ -30,7 +30,6 @@ public class ClassAdapter extends FirestoreRecyclerAdapter<Class, ClassAdapter.C
         holder.studentName.setText(model.getStudentName());
         holder.subject.setText(model.getSubject());
         holder.date.setText(model.getDate());
-//        holder.grade.setText(String.valueOf(model.getGrade()));
     }
 
     @NonNull
