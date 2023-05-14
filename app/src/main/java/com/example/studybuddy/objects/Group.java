@@ -1,6 +1,13 @@
 package com.example.studybuddy.objects;
 
-public class Group {
+import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Group implements Parcelable {
 
     private boolean available;
     private String day;
@@ -11,11 +18,11 @@ public class Group {
     private int min_participants;
     private String subject;
     private String time;
-    private int year;
-    private String[] participants;
+    private String year;
+    private List<String> participants = new ArrayList<String>();
     private String id;
 
-    public Group (String day, String degree, String language, String location, int max_participants, int min_participants, String subject, String time, int year, String id){
+    public Group (String day, String degree, String language, String location, int max_participants, int min_participants, String subject, String time, String year, String id){
         this.available = true;
         this.day = day;
         this.degree = degree;
@@ -29,9 +36,23 @@ public class Group {
         this.id = id;
     }
 
-    public boolean isAvailable() {
-        return available;
+    protected Group(Parcel in) {
+        available = in.readByte() != 0;
+        day = in.readString();
+        degree = in.readString();
+        language = in.readString();
+        location = in.readString();
+        max_participants = in.readInt();
+        min_participants = in.readInt();
+        subject = in.readString();
+        time = in.readString();
+        year = in.readString();
+        participants = in.createStringArrayList();
+        id = in.readString();
     }
+
+    public boolean isAvailable() {
+        return available;    }
 
     public String getDay() {
         return day;
@@ -65,7 +86,7 @@ public class Group {
         return time;
     }
 
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
@@ -73,7 +94,42 @@ public class Group {
         return id;
     }
 
-    public String[] getParticipants() {
+    public List<String> getParticipants() {
         return participants;
+    }
+
+    public static final Creator<Group> CREATOR = new Creator<Group>() {
+        @Override
+        public Group createFromParcel(Parcel in) {
+            return new Group(in);
+        }
+
+        @Override
+        public Group[] newArray(int size) {
+            return new Group[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            dest.writeBoolean(available);
+//        }
+        dest.writeString(day);
+        dest.writeString(degree);
+        dest.writeString(language);
+        dest.writeString(location);
+        dest.writeInt(max_participants);
+        dest.writeInt(min_participants);
+        dest.writeString(subject);
+        dest.writeString(time);
+        dest.writeString(year);
+        dest.writeList(participants);
     }
 }

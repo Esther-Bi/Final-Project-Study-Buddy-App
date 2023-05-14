@@ -211,4 +211,36 @@ public interface API {
             @Field("uid") String uid,
             @Field("groupId") String groupId
     );
+////////////////////////////////////
+    @FormUrlEncoded
+    @POST("openNewGroup")
+    Call<ResponseBody> openNewGroup(
+            @Field("uid") String uid,
+            @Field("subject") String subject,
+            @Field("degree") String degree,
+            @Field("year") String year,
+            @Field("day") String day,
+            @Field("time") String time,
+            @Field("language") String language,
+            @Field("min") String min,
+            @Field("max") String max,
+            @Field("location") String location,
+            @Field("link") String link
+    );
+
+    @GET("getAllGroups")
+    Call<ArrayList<Group>> getAllGroups(
+    );
+
+    @GET("getFilteredGroups")
+    Call<ArrayList<Group>> getFilteredGroups(
+            @Query("subject") String subject,
+            @Query("degree") String degree,
+            @Query("year") String year,
+            @Query("day") String day,
+            @Query("time") String time,
+            @Query("language") String language,
+            @Query("participants") String participants,
+            @Query("location") String location
+    );
 }

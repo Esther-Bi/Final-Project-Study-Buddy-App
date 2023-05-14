@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="degrees">
+    <item>Select Degree</item>
+    <item>Computer Science</item>
+    <item>Civil Engineering</item>
+    <item>Mechanical Engineering</item>
+    <item>Economics and Business Administration</item>
+    <item>Nursing</item>
+    <item>Electrical Engineering</item>
+    <item>Software Engineering</item>
+    <item>Aeronautics</item>
+    <item>Speech Therapy</item>
+    <item>Medicine</item>
+    <item>Occupational Therapy</item>
+</string-array>
+</resources>

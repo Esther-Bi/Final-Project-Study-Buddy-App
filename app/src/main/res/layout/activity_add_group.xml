@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".viewModel.AddGroupActivity"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="-15dp">
+
+    <TextView
+        android:id="@+id/new_group_text"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginTop="15dp"
+        android:text="My New Group"
+        android:textAlignment="center"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/subjectSpinner"/>
+
+    <TextView
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:id="@+id/subjectSpinner"
+        android:text="Select Course"
+        android:textColor="@color/black"
+        android:gravity="center_vertical"
+        android:textSize="16dp"
+        android:background="@android:drawable/editbox_background"
+        app:layout_constraintBottom_toTopOf="@+id/degreeSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_group_text" />
+
+    <TextView
+        android:id="@+id/degreeSpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:background="@android:drawable/editbox_background"
+        android:gravity="center_vertical"
+        android:text="Select Degree"
+        android:textColor="@color/black"
+        android:textSize="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/yearSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subjectSpinner" />
+
+    <Spinner
+        android:id="@+id/yearSpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:background="@android:drawable/editbox_background"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/daySpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/degreeSpinner" />
+
+    <Spinner
+        android:id="@+id/daySpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/timeSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/yearSpinner"
+        android:background="@android:drawable/editbox_background" />
+
+    <Spinner
+        android:id="@+id/timeSpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/languageSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/daySpinner"
+        android:background="@android:drawable/editbox_background" />
+
+    <Spinner
+        android:id="@+id/languageSpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/minParticipantsSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeSpinner"
+        android:background="@android:drawable/editbox_background" />
+
+    <Spinner
+        android:id="@+id/minParticipantsSpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:background="@android:drawable/editbox_background"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/maxParticipantsSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/languageSpinner" />
+
+    <Spinner
+        android:id="@+id/maxParticipantsSpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@+id/locationSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/minParticipantsSpinner"
+        android:background="@android:drawable/editbox_background" />
+
+    <Spinner
+        android:id="@+id/locationSpinner"
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:background="@android:drawable/editbox_background"
+        android:gravity="center_vertical"
+        app:layout_constraintBottom_toTopOf="@id/linkSpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/maxParticipantsSpinner" />
+
+    <EditText
+        android:layout_width="265dp"
+        android:layout_height="45dp"
+        android:id="@+id/linkSpinner"
+        android:text="Insert WhatsApp Group Link"
+        android:textColor="@color/black"
+        android:gravity="center_vertical"
+        android:textSize="16dp"
+        android:background="@android:drawable/editbox_background"
+        app:layout_constraintBottom_toTopOf="@+id/open_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationSpinner" />
+
+    <Button
+        android:id="@+id/open_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="open group"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linkSpinner" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

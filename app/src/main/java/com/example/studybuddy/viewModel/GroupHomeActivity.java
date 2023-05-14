@@ -1,5 +1,6 @@
 package com.example.studybuddy.viewModel;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -12,6 +13,11 @@ import com.example.studybuddy.adapter.GroupAdapter;
 import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Group;
 import com.example.studybuddy.objects.Teacher;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +26,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -34,7 +43,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GroupHomeActivity extends AppCompatActivity{
-
+    GoogleSignInClient googleSignInClient;
 
     public GroupAdapter adapter;
     RecyclerView recyclerView;// = findViewById(R.id.recyclerview);
@@ -46,6 +55,7 @@ public class GroupHomeActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        googleSignInClient = GoogleSignIn.getClient(GroupHomeActivity.this, GoogleSignInOptions.DEFAULT_SIGN_IN);
         setContentView(R.layout.activity_group_home);
 
         recyclerView = findViewById(R.id.recyclerview);
@@ -119,6 +129,54 @@ public class GroupHomeActivity extends AppCompatActivity{
         });
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_group, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_groups:
+                startActivity(new Intent(GroupHomeActivity.this, GroupHomeActivity.class));
+                return true;
+            case R.id.action_edit_profile:
+                //startActivity(new Intent(AddGroupActivity.this, GroupProfileActivity.class));
+                finish();
+                return true;
+            case R.id.action_search_group:
+                startActivity(new Intent(GroupHomeActivity.this, SearchGroupActivity.class));
+                finish();
+                return true;
+            case R.id.action_open_group:
+                startActivity(new Intent(GroupHomeActivity.this, AddGroupActivity.class));
+                finish();
+                return true;
+            case R.id.action_log_out:
+                googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            // When task is successful, sign out from firebase
+                            FirebaseAuth.getInstance().signOut();
+                            // Display Toast
+                            Toast.makeText(getApplicationContext(), "Logout successfully, See you soon (:", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(GroupHomeActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    }
+                });
+            case R.id.action_change_user_type:
+                startActivity(new Intent(GroupHomeActivity.this, ChooseUserActivity.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

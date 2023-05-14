@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_groups"
+        android:title="My Groups"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_edit_profile"
+        android:orderInCategory="100"
+        android:title="Edit Profile"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_search_group"
+        android:orderInCategory="101"
+        android:title="Search For a Learning Group" />
+    <item
+        android:id="@+id/action_open_group"
+        android:orderInCategory="102"
+        android:title="Open New Learning Group" />
+    <item
+        android:id="@+id/action_my_groups"
+        android:orderInCategory="103"
+        android:title="My Groups" />
+    <item
+        android:id="@+id/action_log_out"
+        android:orderInCategory="104"
+        android:title="log out" />
+    <item
+        android:id="@+id/action_change_user_type"
+        android:orderInCategory="105"
+        android:title="Change User Type" />
+</menu>

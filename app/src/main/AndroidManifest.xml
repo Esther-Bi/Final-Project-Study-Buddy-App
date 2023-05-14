@@ -32,7 +32,28 @@
         android:theme="@style/Theme.StudyBuddy"
         android:usesCleartextTraffic="true">
         <activity
+            android:name="com.example.studybuddy.viewModel.ChooseGroupActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name="com.example.studybuddy.viewModel.GroupHomeActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name="com.example.studybuddy.viewModel.SearchGroupActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name="com.example.studybuddy.viewModel.AddGroupActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

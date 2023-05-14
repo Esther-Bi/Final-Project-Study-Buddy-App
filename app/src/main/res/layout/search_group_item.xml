@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/subject"
+        android:textColor="@color/black"
+        android:textSize="22dp"
+        tools:text="subject"
+        android:layout_marginLeft="30dp"/>
+
+    <TextView
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/degree"
+        android:layout_marginLeft="30dp"
+        android:layout_below="@id/subject"
+        android:textColor="@color/black"
+        tools:text="degree"/>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="260dp">
+
+
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/day"
+            android:text="day"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/time"
+            android:text="time"
+            android:textColor="@color/black"
+            android:layout_below="@id/day" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
