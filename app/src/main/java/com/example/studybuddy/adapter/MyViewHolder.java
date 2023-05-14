@@ -38,12 +38,6 @@ public class MyViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View view) {
                 Log.d("check me!!!!" , "_______");
-//                if(recyclerViewInterface != null){
-//                    int pos = getAdapterPosition();
-//                    if(pos != RecyclerView.NO_POSITION){
-//                        recyclerViewInterface.onCancelClassClick(studentName.getText().toString(),subject.getText().toString(),date.getText().toString());
-//                    }
-//                }
             }
         });
     }
