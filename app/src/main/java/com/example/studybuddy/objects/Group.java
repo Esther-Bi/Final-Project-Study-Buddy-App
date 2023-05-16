@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Group implements Parcelable {
 
-    private boolean available;
+//    private boolean available;
     private String day;
     private String degree;
     private String language;
@@ -22,8 +22,8 @@ public class Group implements Parcelable {
     private List<String> participants = new ArrayList<String>();
     private String id;
 
-    public Group (String day, String degree, String language, String location, int max_participants, int min_participants, String subject, String time, String year, String id){
-        this.available = true;
+    public Group (String day, String degree, String language, String location, int max_participants, int min_participants, String subject, String time, String year, List<String> participants, String id){
+//        this.available = true;
         this.day = day;
         this.degree = degree;
         this.language = language;
@@ -33,11 +33,12 @@ public class Group implements Parcelable {
         this.subject = subject;
         this.time = time;
         this.year = year;
+        this.participants = participants;
         this.id = id;
     }
 
     protected Group(Parcel in) {
-        available = in.readByte() != 0;
+//        available = in.readByte() != 0;
         day = in.readString();
         degree = in.readString();
         language = in.readString();
@@ -47,12 +48,12 @@ public class Group implements Parcelable {
         subject = in.readString();
         time = in.readString();
         year = in.readString();
-        participants = in.createStringArrayList();
+        participants = in.readArrayList(null);
         id = in.readString();
     }
 
-    public boolean isAvailable() {
-        return available;    }
+//    public boolean isAvailable() {
+//        return available;    }
 
     public String getDay() {
         return day;
@@ -117,10 +118,7 @@ public class Group implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            dest.writeBoolean(available);
-//        }
+        //        dest.writeByte((byte) (available ? 1 : 0));
         dest.writeString(day);
         dest.writeString(degree);
         dest.writeString(language);
@@ -131,5 +129,6 @@ public class Group implements Parcelable {
         dest.writeString(time);
         dest.writeString(year);
         dest.writeList(participants);
+        dest.writeString(id);
     }
 }
