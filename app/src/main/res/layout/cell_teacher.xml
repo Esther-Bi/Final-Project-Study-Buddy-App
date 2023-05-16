@@ -5,12 +5,45 @@ android:layout_width="match_parent"
 android:layout_height="120dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
         android:id="@+id/teacherName"
         android:gravity="center_vertical"
         android:text="teacher name"
         android:textSize="20dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"/>
+
+    <RatingBar
+        android:id="@+id/rating"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
+        android:layout_toEndOf="@+id/teacherName"
+        android:gravity="center"
+        android:progressTint="#FFCC01"
+        android:rating="3" />
+
+    <TextView
+        android:id="@+id/degree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/teacherName"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="degree"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/degree"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="price"
+        android:textSize="15dp" />
 
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.example.studybuddy.viewModel;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -11,6 +12,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -28,6 +32,9 @@ import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Teacher;
 import com.example.studybuddy.objects.Group;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -44,7 +51,8 @@ public class SearchGroupActivity extends AppCompatActivity implements AdapterVie
     Button searchGroupsBtn;
     Dialog dialog;
     String subject = "choose course", degree = "Select Degree", year, day, time, language, participants, location;
-
+    TextView find_text;
+    Button open_new_group;
 
     ArrayList<Group> filteredGroups = new ArrayList<Group>();
 
@@ -66,6 +74,10 @@ public class SearchGroupActivity extends AppCompatActivity implements AdapterVie
         locationsSpinner = findViewById(R.id.locationsSpinner);
         participantsSpinner = findViewById(R.id.participantsSpinner);
         searchGroupsBtn = findViewById(R.id.search_groups_btn);
+        open_new_group = findViewById(R.id.open_new_group);
+        open_new_group.setVisibility(View.INVISIBLE);
+        find_text = findViewById(R.id.find_text);
+        find_text.setVisibility(View.INVISIBLE);
 
         yearsSpinner.setOnItemSelectedListener(this);
         daysSpinner.setOnItemSelectedListener(this);
@@ -197,20 +209,28 @@ public class SearchGroupActivity extends AppCompatActivity implements AdapterVie
 
 
         searchGroupsBtn.setOnClickListener(v -> {
-                initFilteredGroups();
+            open_new_group.setVisibility(View.INVISIBLE);
+            find_text.setVisibility(View.INVISIBLE);
+            initFilteredGroups();
+        });
+
+        open_new_group.setOnClickListener(v -> {
+            startActivity(new Intent(SearchGroupActivity.this, AddGroupActivity.class));
         });
 
         setUpOnclickListener();
     }
 
     private void setupData() {
-        Call<ArrayList<Group>> call = RetrofitClient.getInstance().getAPI().getAllGroups();
+        Call<ArrayList<Group>> call = RetrofitClient.getInstance().getAPI().getAllGroups(FirebaseAuth.getInstance().getCurrentUser().getUid());
         call.enqueue(new Callback<ArrayList<Group>>() {
             @Override
             public void onResponse(Call<ArrayList<Group>> call, Response<ArrayList<Group>> response) {
                 filteredGroups = response.body();
                 if (filteredGroups == null){
                     filteredGroups = new ArrayList<Group>();
+                    find_text.setVisibility(View.VISIBLE);
+                    open_new_group.setVisibility(View.VISIBLE);
                 }
                 FilteredGroupAdapter adapter = new FilteredGroupAdapter(getApplicationContext(), 0, filteredGroups);
                 adapter.notifyDataSetChanged();
@@ -225,13 +245,15 @@ public class SearchGroupActivity extends AppCompatActivity implements AdapterVie
     }
 
     private void initFilteredGroups(){
-        Call<ArrayList<Group>> call = RetrofitClient.getInstance().getAPI().getFilteredGroups(subject, degree, year, day, time, language, participants, location);
+        Call<ArrayList<Group>> call = RetrofitClient.getInstance().getAPI().getFilteredGroups(FirebaseAuth.getInstance().getCurrentUser().getUid(), subject, degree, year, day, time, language, participants, location);
         call.enqueue(new Callback<ArrayList<Group>>() {
             @Override
             public void onResponse(Call<ArrayList<Group>> call, Response<ArrayList<Group>> response) {
                 filteredGroups = response.body();
                 if (filteredGroups == null){
                     filteredGroups = new ArrayList<Group>();
+                    find_text.setVisibility(View.VISIBLE);
+                    open_new_group.setVisibility(View.VISIBLE);
                 }
                 FilteredGroupAdapter adapter = new FilteredGroupAdapter(getApplicationContext(), 0, filteredGroups);
                 adapter.notifyDataSetChanged();
@@ -252,9 +274,9 @@ public class SearchGroupActivity extends AppCompatActivity implements AdapterVie
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
             {
                 Group selectedGroup = (Group) (listView.getItemAtPosition(position));
-                Intent intent = new Intent(getApplicationContext(), AddGroupActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ChooseGroupActivity.class);
 
-                intent.putExtra("id",selectedGroup);
+                intent.putExtra("chosen_group",selectedGroup);
                 startActivity(intent);
             }
         });
@@ -285,6 +307,54 @@ public class SearchGroupActivity extends AppCompatActivity implements AdapterVie
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_group, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_groups:
+                startActivity(new Intent(SearchGroupActivity.this, GroupHomeActivity.class));
+                return true;
+            case R.id.action_edit_profile:
+                //startActivity(new Intent(AddGroupActivity.this, GroupProfileActivity.class));
+                finish();
+                return true;
+            case R.id.action_search_group:
+                startActivity(new Intent(SearchGroupActivity.this, SearchGroupActivity.class));
+                finish();
+                return true;
+            case R.id.action_open_group:
+                startActivity(new Intent(SearchGroupActivity.this, AddGroupActivity.class));
+                finish();
+                return true;
+            case R.id.action_log_out:
+                googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()) {
+                            // When task is successful, sign out from firebase
+                            FirebaseAuth.getInstance().signOut();
+                            // Display Toast
+                            Toast.makeText(getApplicationContext(), "Logout successfully, See you soon (:", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(SearchGroupActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    }
+                });
+            case R.id.action_change_user_type:
+                startActivity(new Intent(SearchGroupActivity.this, ChooseUserActivity.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

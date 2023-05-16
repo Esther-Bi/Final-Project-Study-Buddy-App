@@ -230,10 +230,12 @@ public interface API {
 
     @GET("getAllGroups")
     Call<ArrayList<Group>> getAllGroups(
+            @Query("uid") String uid
     );
 
     @GET("getFilteredGroups")
     Call<ArrayList<Group>> getFilteredGroups(
+            @Query("uid") String uid,
             @Query("subject") String subject,
             @Query("degree") String degree,
             @Query("year") String year,
@@ -242,6 +244,13 @@ public interface API {
             @Query("language") String language,
             @Query("participants") String participants,
             @Query("location") String location
+    );
+
+    @FormUrlEncoded
+    @POST("joinGroup")
+    Call<ResponseBody> joinGroup(
+            @Field("uid") String uid,
+            @Field("id") String id
     );
 
     @FormUrlEncoded

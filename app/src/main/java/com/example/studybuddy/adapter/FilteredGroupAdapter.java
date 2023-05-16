@@ -25,6 +25,7 @@ public class FilteredGroupAdapter extends ArrayAdapter<Group> {
         if(convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.search_group_item, parent, false);
         }
+
         TextView subject = (TextView) convertView.findViewById(R.id.subject);
         subject.setText(group.getSubject());
         TextView day = (TextView) convertView.findViewById(R.id.day);
