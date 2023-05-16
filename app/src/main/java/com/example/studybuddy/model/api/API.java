@@ -211,7 +211,7 @@ public interface API {
             @Field("uid") String uid,
             @Field("groupId") String groupId
     );
-////////////////////////////////////
+
     @FormUrlEncoded
     @POST("openNewGroup")
     Call<ResponseBody> openNewGroup(
@@ -242,5 +242,28 @@ public interface API {
             @Query("language") String language,
             @Query("participants") String participants,
             @Query("location") String location
+    );
+
+    @FormUrlEncoded
+    @POST("editGroupTime")
+    Call<ResponseBody> editGroupTime(
+            @Field("groupId") String groupId,
+            @Field("day") String day,
+            @Field("time") String time,
+            @Field("location") String location
+    );
+
+
+    @GET("payBoxLink")
+    Call<String> payBoxLink(
+            @Query("uid") String uid,
+            @Query("teacherName") String teacherName,
+            @Query("subject") String subject,
+            @Query("date") String date
+    );
+
+    @POST("PastCourses")
+    Call<ResponseBody> PastCourses(
+
     );
 }

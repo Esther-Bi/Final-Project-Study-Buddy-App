@@ -30,7 +30,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +45,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GroupHomeActivity extends AppCompatActivity{
+public class GroupHomeActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
     GoogleSignInClient googleSignInClient;
 
     public GroupAdapter adapter;
@@ -50,6 +53,14 @@ public class GroupHomeActivity extends AppCompatActivity{
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
+
+    String day, time, location;
+
+
+    Spinner daysSpinner;// = findViewById(R.id.daysSpinner);
+    Spinner timesSpinner;// = findViewById(R.id.timesSpinner);
+    Spinner locationsSpinner;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +123,6 @@ public class GroupHomeActivity extends AppCompatActivity{
                             refresh();
                         }
                     }
-
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.d("Fail", t.getMessage());
@@ -127,9 +137,75 @@ public class GroupHomeActivity extends AppCompatActivity{
                 dialog.dismiss();
             }
         });
-
-
     }
+
+    public void popUpEdit(String groupId){
+
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.edit_group_popup, null);
+
+        Button edit_group_save = popupView.findViewById(R.id.edit_group_save);
+        Button edit_group_cancel = popupView.findViewById(R.id.edit_group_cancel);
+        daysSpinner = popupView.findViewById(R.id.daysSpinner);
+        timesSpinner = popupView.findViewById(R.id.timesSpinner);
+        locationsSpinner = popupView.findViewById(R.id.locationsSpinner);
+
+        daysSpinner.setOnItemSelectedListener(this);
+        timesSpinner.setOnItemSelectedListener(this);
+        locationsSpinner.setOnItemSelectedListener(this);
+
+        ArrayAdapter<CharSequence> daySpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.days, android.R.layout.simple_spinner_item);
+        daySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        daysSpinner.setAdapter(daySpinnerAdapter);
+
+        ArrayAdapter<CharSequence> timeSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.times, android.R.layout.simple_spinner_item);
+        timeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        timesSpinner.setAdapter(timeSpinnerAdapter);
+
+        ArrayAdapter<CharSequence> locationSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.locations, android.R.layout.simple_spinner_item);
+        locationSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        locationsSpinner.setAdapter(locationSpinnerAdapter);
+
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        edit_group_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Log.d("want to quit", "delete group");
+                Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().editGroupTime(groupId, day, time, location);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                        if(response.isSuccessful()){
+                            Log.d("done", "done");
+                            refresh();
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        Log.d("Fail", t.getMessage());
+                    }
+                });
+            }
+        });
+        edit_group_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("regret quit", "dont want to quit this group");
+                dialog.dismiss();
+            }
+        });
+    }
+
+//    public void openWhatsapp(String groupId){
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -179,4 +255,21 @@ public class GroupHomeActivity extends AppCompatActivity{
         }
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        if (adapterView.getId() == R.id.daysSpinner) {
+            day = adapterView.getItemAtPosition(i).toString();
+        }
+        if (adapterView.getId() == R.id.timesSpinner) {
+            time = adapterView.getItemAtPosition(i).toString();
+        }
+        if (adapterView.getId() == R.id.locationsSpinner) {
+            location = adapterView.getItemAtPosition(i).toString();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
 }

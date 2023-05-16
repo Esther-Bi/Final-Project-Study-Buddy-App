@@ -53,45 +53,23 @@ public class GroupAdapter extends RecyclerView.Adapter<MyViewHolder> {
             @Override
             public void onClick(View view) {
                 activity.popUpDelete(items.get(position).getId());
-//                if (yes == 1) {
-//                    Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().deleteFromGroup(FirebaseAuth.getInstance().getCurrentUser().getUid(), items.get(position).getId());
-//                    call.enqueue(new Callback<ResponseBody>() {
-//                        @Override
-//                        public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
-//                            if(response.isSuccessful()){
-//                                Log.d("done", "done");
-//                                activity.refresh();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                            Log.d("Fail", t.getMessage());
-//                        }
-//                    });
-//                }
             }
         });
-
-    }
-
-//    public void qoitFromGroup(int position) {
-//        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().deleteFromGroup(FirebaseAuth.getInstance().getCurrentUser().getUid(), items.get(position).getId());
-//        call.enqueue(new Callback<ResponseBody>() {
+        holder.edit_Button.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onClick(View view) {
+                activity.popUpEdit(items.get(position).getId());
+            }
+        });
+//        holder.whatsapp_Button.setOnClickListener(new View.OnClickListener() {
+//            @SuppressLint("RestrictedApi")
 //            @Override
-//            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
-//                if(response.isSuccessful()){
-//                    Log.d("done", "done");
-//                    activity.refresh();
-//                }
-//            }
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.d("Fail", t.getMessage());
+//            public void onClick(View view) {
+//                activity.openWhatsapp(items.get(position).get);
 //            }
 //        });
-//    }
-
+    }
 
     @Override
     public int getItemCount() {
