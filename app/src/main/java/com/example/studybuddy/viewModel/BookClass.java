@@ -114,7 +114,7 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
                 if( filteredTeachers == null){
                     filteredTeachers = new ArrayList<Teacher>();
                 }
-                TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, filteredTeachers);
+                TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, filteredTeachers, model.getCourseValueFromSpinner());
                 adapter.notifyDataSetChanged();
                 listView.setAdapter(adapter);
             }
@@ -155,12 +155,12 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
 
     }
 
-    private void setUpList() {
-        listView = (ListView) findViewById(R.id.teachersListView);
-        TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, model.getTeachersList());
-        adapter.notifyDataSetChanged();
-        listView.setAdapter(adapter);
-    }
+//    private void setUpList() {
+//        listView = (ListView) findViewById(R.id.teachersListView);
+//        TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, model.getTeachersList());
+//        adapter.notifyDataSetChanged();
+//        listView.setAdapter(adapter);
+//    }
 
 
     private void setUpOnclickListener()

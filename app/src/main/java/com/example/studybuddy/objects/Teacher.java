@@ -2,6 +2,7 @@ package com.example.studybuddy.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.Toast;
 
 import com.google.firebase.database.Exclude;
 
@@ -22,7 +23,7 @@ public class Teacher implements Parcelable {
     private String gender;
     private String phone;
     private String payBox;
-    private double rating = 0.01;
+    private double rating;
 
 
     public Teacher() {
@@ -33,7 +34,7 @@ public class Teacher implements Parcelable {
         this.name = name;
         this.courses = courses;
     }
-    public Teacher(String name, String year, String degree, String gender, String age,String phone, String pay_box, String id) {
+    public Teacher(String name, String year, String degree, String gender, String age,String phone, String pay_box, String id, Double rating) {
         this.name = name;
         this.age = age;
         this.year = year;
@@ -42,6 +43,7 @@ public class Teacher implements Parcelable {
         this.id = id;
         this.phone = phone;
         this.payBox = pay_box;
+        this.rating = rating;
     }
 
     public void setDocumentId(String documentId) {
@@ -58,6 +60,7 @@ public class Teacher implements Parcelable {
         this.courses = in.readArrayList(null);
         this.prices = in.readArrayList(null);
         this.dates = in.readArrayList(null);
+        this.degree = in.readString();
         this.rating = in.readDouble();
     }
 
@@ -183,6 +186,7 @@ public class Teacher implements Parcelable {
         dest.writeList(courses);
         dest.writeList(prices);
         dest.writeList(dates);
+        dest.writeString(degree);
         dest.writeDouble(rating);
     }
 }
