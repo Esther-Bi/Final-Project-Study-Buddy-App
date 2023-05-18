@@ -27,16 +27,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studybuddy.R;
-import com.example.studybuddy.model.StudentProfileModel;
 import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Student;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import android.content.Intent;
 
 import okhttp3.ResponseBody;
@@ -45,9 +43,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class StudentProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
-    StudentProfileModel model = new StudentProfileModel(this);
+public class GroupProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     EditText name, age, phone_number;
     TextView degree;
@@ -65,9 +61,9 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_student_profile);
+        setContentView(R.layout.activity_group_profile);
 
-        googleSignInClient= model.googleSignInClient();
+        googleSignInClient= GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN);
 
         name = findViewById(R.id.name);
         age = findViewById(R.id.age);
@@ -88,7 +84,7 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
         degree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogDegree = new Dialog(StudentProfileActivity.this);
+                dialogDegree = new Dialog(GroupProfileActivity.this);
                 dialogDegree.setContentView(R.layout.dialog_searchable_spinner);
                 dialogDegree.getWindow().setLayout(800,1000);
                 dialogDegree.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -131,7 +127,7 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
             //Converting fields to text
             int radioID = gender_group.getCheckedRadioButtonId();
             if (radioID == -1) {
-                Toast.makeText(StudentProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
             } else {
                 gender = findViewById(radioID);
                 String textGender = gender.getText().toString();
@@ -142,12 +138,12 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
                 String textPhone = phone_number.getText().toString();
 
                 if (TextUtils.isEmpty(textName) || TextUtils.isEmpty(textDegree) || TextUtils.isEmpty(textYear) || TextUtils.isEmpty(textGender) || TextUtils.isEmpty(textAge) || TextUtils.isEmpty(textPhone)) {
-                    Toast.makeText(StudentProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
                 }else if (textPhone.length() != 9){
-                    Toast.makeText(StudentProfileActivity.this, "phone number is illegal", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GroupProfileActivity.this, "phone number is illegal", Toast.LENGTH_SHORT).show();
                 } else {
                     updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone);
-                    startActivity(new Intent(this, StudentHomeActivity.class));
+                    startActivity(new Intent(this, GroupHomeActivity.class));
                 }
             }
         });
@@ -156,14 +152,52 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
     @Override
     protected void onStart(){
         super.onStart();
-        model.modelOnStart(name, age, year, degree, phone_number, StudentProfileActivity.this);
+        Call<Student> call = RetrofitClient.getInstance().getAPI().getStudentDetails(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        call.enqueue(new Callback<Student>() {
+            @Override
+            public void onResponse(Call<Student> call, Response<Student> response) {
+                Student curr_student;
+                curr_student = response.body();
+                String nameResult = curr_student.getName();
+                String ageResult = curr_student.getAge();
+                String yearResult = curr_student.getYear();
+                String degreeResult = curr_student.getDegree();
+                String phoneResult = curr_student.getPhone();
+                name.setText(nameResult);
+                age.setText(ageResult);
+                //year.setText(yearResult);
+                degree.setText(degreeResult);
+                phone_number.setText(phoneResult);
+            }
+
+            @Override
+            public void onFailure(Call<Student> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+                Toast.makeText(GroupProfileActivity.this, "no profile yet" , Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone) {
+        assert FirebaseAuth.getInstance().getCurrentUser() != null;
 
-        model.updateProfileModel(textName, textYear, textDegree, textGender, textAge, textPhone);
-        startActivity(new Intent(StudentProfileActivity.this, MainActivity.class));
-        finish();
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateStudentDetails(FirebaseAuth.getInstance().getCurrentUser().getUid(), textName, textYear, textDegree, textGender, textAge, textPhone);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("done", "done");
+                    Toast.makeText(GroupProfileActivity.this, "update profile successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+                Toast.makeText(GroupProfileActivity.this, "error in updating profile", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -180,26 +214,26 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_student_home, menu);
+        inflater.inflate(R.menu.menu_group, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_classes:
-                startActivity(new Intent(StudentProfileActivity.this, StudentHomeActivity.class));
+            case R.id.action_groups:
+                startActivity(new Intent(GroupProfileActivity.this, GroupHomeActivity.class));
                 return true;
             case R.id.action_edit_profile:
-                startActivity(new Intent(StudentProfileActivity.this, StudentProfileActivity.class));
+                startActivity(new Intent(GroupProfileActivity.this, GroupProfileActivity.class));
                 finish();
                 return true;
-            case R.id.action_payments:
-                startActivity(new Intent(StudentProfileActivity.this, MyPaymentsActivity.class));
+            case R.id.action_search_group:
+                startActivity(new Intent(GroupProfileActivity.this, SearchGroupActivity.class));
                 finish();
                 return true;
-            case R.id.action_book_a_class:
-                startActivity(new Intent(StudentProfileActivity.this, BookClass.class));
+            case R.id.action_open_group:
+                startActivity(new Intent(GroupProfileActivity.this, AddGroupActivity.class));
                 finish();
                 return true;
             case R.id.action_log_out:
@@ -211,13 +245,13 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
                             FirebaseAuth.getInstance().signOut();
                             // Display Toast
                             Toast.makeText(getApplicationContext(), "Logout successfully, See you soon (:", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(StudentProfileActivity.this, MainActivity.class));
+                            startActivity(new Intent(GroupProfileActivity.this, MainActivity.class));
                             finish();
                         }
                     }
                 });
             case R.id.action_change_user_type:
-                startActivity(new Intent(StudentProfileActivity.this, ChooseUserActivity.class));
+                startActivity(new Intent(GroupProfileActivity.this, ChooseUserActivity.class));
                 finish();
                 return true;
             default:

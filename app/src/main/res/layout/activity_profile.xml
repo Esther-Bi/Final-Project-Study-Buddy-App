@@ -22,7 +22,7 @@
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="enter your name"
+                android:hint="name"
                 android:textColor="#000"
                 android:textSize="18dp"
                 android:paddingLeft="15dp"
@@ -78,7 +78,7 @@
                 android:id="@+id/age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="enter your age"
+                android:hint="age"
                 android:textColor="#000"
                 android:textSize="18dp"
                 android:paddingLeft="15dp"
@@ -107,7 +107,7 @@
                 android:id="@+id/phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="enter your phone number"
+                android:hint="phone number"
                 android:textColor="#000"
                 android:textSize="18dp"
                 android:paddingLeft="15dp"
@@ -124,13 +124,14 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:src="@drawable/ic_baseline_school_24"/>
-            <EditText
+            <TextView
                 android:id="@+id/degree"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="enter your degree"
+                android:hint="select degree"
                 android:textColor="#000"
                 android:textSize="18dp"
+                android:textAlignment="center"
                 android:paddingLeft="15dp"
                 android:layout_gravity="center_vertical"/>
 
@@ -145,15 +146,16 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:src="@drawable/ic_baseline_insert_comment_24"/>
-            <EditText
+
+            <Spinner
                 android:id="@+id/year"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="enter your year of study"
+                android:layout_width="180dp"
+                android:layout_height="40dp"
+                android:text="select year of study"
                 android:textColor="#000"
                 android:textSize="18dp"
                 android:paddingLeft="15dp"
-                android:layout_gravity="center_vertical"/>
+                android:layout_gravity="center_vertical" />
 
         </LinearLayout>
         <LinearLayout
@@ -170,7 +172,7 @@
                 android:id="@+id/pay_box"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="enter your payBox group link"
+                android:hint="payBox group link"
                 android:textColor="#000"
                 android:textSize="18dp"
                 android:paddingLeft="15dp"

@@ -61,6 +61,7 @@ public class Teacher implements Parcelable {
         this.prices = in.readArrayList(null);
         this.dates = in.readArrayList(null);
         this.degree = in.readString();
+        this.payBox = in.readString();
         this.rating = in.readDouble();
     }
 
@@ -187,6 +188,7 @@ public class Teacher implements Parcelable {
         dest.writeList(prices);
         dest.writeList(dates);
         dest.writeString(degree);
+        dest.writeString(payBox);
         dest.writeDouble(rating);
     }
 }

@@ -290,7 +290,7 @@ public class AddGroupActivity extends AppCompatActivity implements AdapterView.O
                 startActivity(new Intent(AddGroupActivity.this, GroupHomeActivity.class));
                 return true;
             case R.id.action_edit_profile:
-                //startActivity(new Intent(AddGroupActivity.this, GroupProfileActivity.class));
+                startActivity(new Intent(AddGroupActivity.this, GroupProfileActivity.class));
                 finish();
                 return true;
             case R.id.action_search_group:

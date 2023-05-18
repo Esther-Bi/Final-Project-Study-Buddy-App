@@ -323,7 +323,7 @@ public class SearchGroupActivity extends AppCompatActivity implements AdapterVie
                 startActivity(new Intent(SearchGroupActivity.this, GroupHomeActivity.class));
                 return true;
             case R.id.action_edit_profile:
-                //startActivity(new Intent(AddGroupActivity.this, GroupProfileActivity.class));
+                startActivity(new Intent(SearchGroupActivity.this, GroupProfileActivity.class));
                 finish();
                 return true;
             case R.id.action_search_group:

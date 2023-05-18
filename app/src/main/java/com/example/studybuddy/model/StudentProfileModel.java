@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studybuddy.model.api.RetrofitClient;
@@ -38,7 +40,7 @@ public class StudentProfileModel {
         return GoogleSignIn.getClient(this.activity, GoogleSignInOptions.DEFAULT_SIGN_IN);
     }
 
-    public void modelOnStart(EditText name, EditText age, EditText year, EditText degree, EditText phone_number, StudentProfileActivity thisactivity) {
+    public void modelOnStart(EditText name, EditText age, Spinner year, TextView degree, EditText phone_number, StudentProfileActivity thisactivity) {
 
         Call<Student> call = RetrofitClient.getInstance().getAPI().getStudentDetails(user.getUid());
         call.enqueue(new Callback<Student>() {
@@ -53,7 +55,7 @@ public class StudentProfileModel {
                 String phoneResult = curr_student.getPhone();
                 name.setText(nameResult);
                 age.setText(ageResult);
-                year.setText(yearResult);
+                //year.setText(yearResult);
                 degree.setText(degreeResult);
                 phone_number.setText(phoneResult);
             }

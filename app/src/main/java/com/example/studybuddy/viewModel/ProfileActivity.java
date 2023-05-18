@@ -4,19 +4,29 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -43,16 +53,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     ProfileModel model = new ProfileModel(this);
 
-    EditText name, degree, year, age, phone_number, pay_box;
+    EditText name, age, phone_number, pay_box;
+    TextView degree;
+    Spinner year;
     Button save, add_courses, add_dates;
     RadioGroup gender_group;
     RadioButton gender;
+    Dialog dialogDegree;
 //    DocumentReference documentReference;
     FirebaseFirestore db = model.getDb();
+    String degreeText = "Select Degree", yearText;
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
@@ -92,6 +106,14 @@ public class ProfileActivity extends AppCompatActivity {
         add_courses = findViewById(R.id.add_courses);
         add_dates = findViewById(R.id.add_dates);
 
+        ArrayAdapter<CharSequence> degreesSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.degrees, android.R.layout.simple_spinner_item);
+        year.setOnItemSelectedListener(this);
+        ArrayAdapter<CharSequence> yearSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.years, android.R.layout.simple_spinner_item);
+        yearSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        year.setAdapter(yearSpinnerAdapter);
+
 
         //onclick listener for moving to adding courses for teacher
         add_courses.setOnClickListener(v -> {
@@ -101,6 +123,47 @@ public class ProfileActivity extends AppCompatActivity {
         //onclick listener for adding available dates for teacher
         add_dates.setOnClickListener(v -> {
             createDatePopup();
+        });
+
+        degree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogDegree = new Dialog(ProfileActivity.this);
+                dialogDegree.setContentView(R.layout.dialog_searchable_spinner);
+                dialogDegree.getWindow().setLayout(800,1000);
+                dialogDegree.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogDegree.show();
+
+                EditText editText = dialogDegree.findViewById(R.id.search_subject_degree);
+                ListView listView = dialogDegree.findViewById(R.id.search_subject_degree_list_view);
+
+                listView.setAdapter(degreesSpinnerAdapter);
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        degreesSpinnerAdapter.getFilter().filter(s);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        degree.setText(degreesSpinnerAdapter.getItem(position));
+                        degreeText = degreesSpinnerAdapter.getItem(position).toString();
+                        dialogDegree.dismiss();
+                    }
+                });
+            }
         });
 
         //onclick listener for updating profile button
@@ -115,7 +178,7 @@ public class ProfileActivity extends AppCompatActivity {
                 String textAge = age.getText().toString();
                 String textName = name.getText().toString();
                 String textDegree = degree.getText().toString();
-                String textYear = year.getText().toString();
+                String textYear = yearText;
                 String textPhone = phone_number.getText().toString();
                 String textPayBox = pay_box.getText().toString();
 
@@ -136,7 +199,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onStart(){
         super.onStart();
 
-        model.modelOnStart(name, age,year,degree, ProfileActivity.this);
+        model.modelOnStart(name, age, year, degree, pay_box, phone_number, ProfileActivity.this);
     }
 
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox) {
@@ -155,6 +218,17 @@ public class ProfileActivity extends AppCompatActivity {
 //        Toast.makeText(ProfileActivity.this, "updated profile successfully", Toast.LENGTH_SHORT).show();
 //        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
 //        finish();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
+        if (parent.getId() == R.id.year) {
+            yearText = parent.getItemAtPosition(position).toString();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
     @Override

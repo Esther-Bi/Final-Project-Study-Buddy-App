@@ -3,6 +3,8 @@ package com.example.studybuddy.model;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import org.w3c.dom.Text;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -52,7 +56,7 @@ public class ProfileModel {
         return user;
     }
 
-    public void modelOnStart(EditText name, EditText age, EditText year, EditText degree, ProfileActivity thisactivity) {
+    public void modelOnStart(EditText name, EditText age, Spinner year, TextView degree, EditText payBox, EditText phone_number, ProfileActivity thisactivity) {
         Call<Teacher> call = RetrofitClient.getInstance().getAPI().getTeacherDetails(user.getUid());
         call.enqueue(new Callback<Teacher>() {
             @Override
@@ -63,10 +67,14 @@ public class ProfileModel {
                 String ageResult = curr_teacher.getAge();
                 String yearResult = curr_teacher.getYear();
                 String degreeResult = curr_teacher.getDegree();
+                String payBoxResult = curr_teacher.getPayBox();
+                String phoneNumberResult = curr_teacher.getPhone();
                 name.setText(nameResult);
                 age.setText(ageResult);
-                year.setText(yearResult);
+                //year.setText(yearResult);
                 degree.setText(degreeResult);
+                payBox.setText(payBoxResult);
+                phone_number.setText(phoneNumberResult);
             }
 
             @Override
