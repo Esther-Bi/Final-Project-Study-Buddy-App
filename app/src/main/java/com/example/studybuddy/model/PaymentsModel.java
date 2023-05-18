@@ -1,7 +1,11 @@
 package com.example.studybuddy.model;
 
+import static java.lang.Integer.parseInt;
+
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Class;
 import com.example.studybuddy.viewModel.MyPaymentsActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -16,6 +20,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PaymentsModel {
     private MyPaymentsActivity activity;
@@ -33,21 +42,17 @@ public class PaymentsModel {
     }
 
     public void updatePastCourses() {
-        this.classesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().PastCourses();
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    if(documentSnapshot.exists()){
-                        Date date = new Date();
-                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy - HH:mm");
-                        Class current_class = documentSnapshot.toObject(Class.class);
-                        if (current_class.compare(formatter.format(date))){
-                            String dbKey = documentSnapshot.getId();
-                            classesRef.document(dbKey)
-                                    .update("past", "yes");
-                        }
-                    }
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("done", "done");
                 }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
             }
         });
     }
@@ -56,43 +61,42 @@ public class PaymentsModel {
         return this.classesRef.whereEqualTo(field, this.userID).whereEqualTo("past","yes");
     }
 
-    public void onApprovePayment(String name, String subject, String date) {
-        classesRef.whereEqualTo("teacher" , this.userID)
-                .whereEqualTo("studentName" , name).whereEqualTo("subject" , subject)
-                .whereEqualTo("date" , date).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            if(documentSnapshot.exists()){
-                                Class curr = documentSnapshot.toObject(Class.class);
-                                if (curr.getStudentApproval() == 0) {
-                                    Toast.makeText(activity, "student didn't pay yet", Toast.LENGTH_SHORT).show();
-                                } else{
-                                    activity.approvePaymentQuestionPopup(name, subject, date);
-                                }
-                            }
-                        }
-                    }
-                });
+    public void onApprovePayment(String studentName, String subject, String date) {
+
+        Call<String> call = RetrofitClient.getInstance().getAPI().approvePaymentTeacher(this.userID,  studentName, date, subject);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String getStudentApproval = response.body();
+                if (parseInt(getStudentApproval) == 0) {
+                    Toast.makeText(activity, "student didn't pay yet", Toast.LENGTH_SHORT).show();
+                } else{
+                    activity.approvePaymentQuestionPopup(studentName, subject, date);
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
     }
 
 
-    public void click_yes(String name, String subject, String date) {
-        this.classesRef.whereEqualTo("teacher" , this.userID)
-                .whereEqualTo("studentName" , name).whereEqualTo("subject" , subject)
-                .whereEqualTo("date" , date)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                            if(documentSnapshot.exists()){
-                                String dbKey = documentSnapshot.getId();
-                                classesRef.document(dbKey).delete();
-                                Toast.makeText(activity, "paid successfully", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }
-                });
+    public void click_yes(String studentName, String subject, String date) {
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().deletePaidClass(userID, studentName, subject, date);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("done", "done");
+                    Toast.makeText(activity, "paid successfully", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Failed to delete class", t.getMessage());
+                Toast.makeText(activity, "error in removing class", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

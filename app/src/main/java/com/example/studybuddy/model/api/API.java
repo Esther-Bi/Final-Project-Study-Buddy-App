@@ -275,4 +275,21 @@ public interface API {
     Call<ResponseBody> PastCourses(
 
     );
+
+    @GET("approvePaymentTeacher")
+    Call<String> approvePaymentTeacher(
+            @Query("uid") String uid,
+            @Query("studentName") String studentName,
+            @Query("date") String date,
+            @Query("subject") String subject
+    );
+
+    @FormUrlEncoded
+    @POST("deletePaidClass")
+    Call<ResponseBody> deletePaidClass(
+            @Field("uid") String uid,
+            @Field("studentName") String name,
+            @Field("subject") String subject,
+            @Field("date") String date
+    );
 }

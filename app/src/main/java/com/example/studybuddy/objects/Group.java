@@ -21,8 +21,9 @@ public class Group implements Parcelable {
     private String year;
     private List<String> participants = new ArrayList<String>();
     private String id;
+    private String link;
 
-    public Group (String day, String degree, String language, String location, int max_participants, int min_participants, String subject, String time, String year, List<String> participants, String id){
+    public Group (String day, String degree, String language, String location, int max_participants, int min_participants, String subject, String time, String year, List<String> participants, String id, String link){
 //        this.available = true;
         this.day = day;
         this.degree = degree;
@@ -35,6 +36,7 @@ public class Group implements Parcelable {
         this.year = year;
         this.participants = participants;
         this.id = id;
+        this.link = link;
     }
 
     protected Group(Parcel in) {
@@ -130,5 +132,9 @@ public class Group implements Parcelable {
         dest.writeString(year);
         dest.writeList(participants);
         dest.writeString(id);
+    }
+
+    public String getLink() {
+        return link;
     }
 }

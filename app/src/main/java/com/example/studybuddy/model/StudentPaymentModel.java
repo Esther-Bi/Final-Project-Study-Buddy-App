@@ -60,36 +60,36 @@ public class StudentPaymentModel {
 
     public void updatePastCourses() {
 
-        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().PastCourses();
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
-                if(response.isSuccessful()){
-                    Log.d("done", "done");
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
-            }
-        });
-//        this.classesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().PastCourses();
+//        call.enqueue(new Callback<ResponseBody>() {
 //            @Override
-//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-//                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-//                    if(documentSnapshot.exists()){
-//                        Date date = new Date();
-//                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy - HH:mm");
-//                        Class current_class = documentSnapshot.toObject(Class.class);
-//                        if (current_class.compare(formatter.format(date))){
-//                            String dbKey = documentSnapshot.getId();
-//                            classesRef.document(dbKey)
-//                                    .update("past", "yes");
-//                        }
-//                    }
+//            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+//                if(response.isSuccessful()){
+//                    Log.d("done", "done");
 //                }
 //            }
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                Log.d("Fail", t.getMessage());
+//            }
 //        });
+        this.classesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    if(documentSnapshot.exists()){
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy - HH:mm");
+                        Class current_class = documentSnapshot.toObject(Class.class);
+                        if (current_class.compare(formatter.format(date))){
+                            String dbKey = documentSnapshot.getId();
+                            classesRef.document(dbKey)
+                                    .update("past", "yes");
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public Query buildClassQuery(String field){

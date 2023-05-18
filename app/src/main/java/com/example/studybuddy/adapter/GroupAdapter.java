@@ -62,13 +62,13 @@ public class GroupAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 activity.popUpEdit(items.get(position).getId());
             }
         });
-//        holder.whatsapp_Button.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("RestrictedApi")
-//            @Override
-//            public void onClick(View view) {
-//                activity.openWhatsapp(items.get(position).get);
-//            }
-//        });
+        holder.whatsapp_Button.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onClick(View view) {
+                activity.openWhatsapp(items.get(position).getLink());
+            }
+        });
     }
 
     @Override

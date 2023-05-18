@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.studybuddy.R;
@@ -75,6 +76,7 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
     }
 
     public void refresh(){
+
         Call<ArrayList<Group>> call = RetrofitClient.getInstance().getAPI().getMyGroups(FirebaseAuth.getInstance().getCurrentUser().getUid());
         call.enqueue(new Callback<ArrayList<Group>>() {
             @Override
@@ -83,6 +85,7 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
                 if (myGroups == null){
                     myGroups = new ArrayList<Group>();
                 }
+                Toast.makeText(getApplicationContext(), myGroups.get(0).getSubject(), Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(new LinearLayoutManager(GroupHomeActivity.this));
                 adapter = new GroupAdapter(getApplicationContext(),myGroups, GroupHomeActivity.this);
                 recyclerView.setAdapter(adapter);
@@ -93,6 +96,7 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
                 Log.d("Fail", t.getMessage());
             }
         });
+
     }
 
     public void popUpDelete(String groupId){
@@ -203,9 +207,11 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
         });
     }
 
-//    public void openWhatsapp(String groupId){
-//
-//    }
+    public void openWhatsapp(String link){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+        startActivity(browserIntent);
+        finish();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

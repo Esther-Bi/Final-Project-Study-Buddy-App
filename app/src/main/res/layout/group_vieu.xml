@@ -11,15 +11,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/subject"
         android:textColor="@color/black"
-        android:textSize="25dp"
+        android:textSize="22dp"
         tools:text="subject"
-        android:layout_marginLeft="30dp"/>
+        android:layout_marginLeft="10dp"/>
 
     <TextView
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:id="@+id/day"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="10dp"
         android:layout_below="@id/subject"
         android:textColor="@color/black"
         tools:text="day"/>
@@ -28,17 +28,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/time"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="10dp"
         android:layout_below="@id/day"
         android:textColor="@color/black"
         tools:text="time"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/space"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/time"
+        android:textColor="@color/black"
+        android:textSize="7dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/line"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/space"
+        android:textColor="@color/black"
+        android:background="@color/black"
+        tools:text=""
+        android:textSize="0.1dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="220dp"
+        android:layout_marginLeft="180dp"
         android:id="@+id/filterCourseDate">
 
 
