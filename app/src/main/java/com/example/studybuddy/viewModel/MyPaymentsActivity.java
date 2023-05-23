@@ -19,8 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studybuddy.R;
+import com.example.studybuddy.adapter.ClassAdapter;
 import com.example.studybuddy.adapter.PaymentAdapter;
 import com.example.studybuddy.model.PaymentsModel;
+import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Class;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -28,6 +30,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MyPaymentsActivity extends AppCompatActivity implements RecyclerViewInterface {
 
@@ -52,29 +60,27 @@ public class MyPaymentsActivity extends AppCompatActivity implements RecyclerVie
 
     private void setUpRecyclerView() {
 
-        Query query = model.buildClassQuery("teacher");
-        FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()
-                .setQuery(query, Class.class)
-                .build();
+        Call<ArrayList<Class>> call = RetrofitClient.getInstance().getAPI().getClassPayments(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        call.enqueue(new Callback<ArrayList<Class>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Class>> call, Response<ArrayList<Class>> response) {
+                ArrayList<Class> myClass = response.body();
+                if (myClass == null){
+                    myClass = new ArrayList<Class>();
+                }
+                Toast.makeText(getApplicationContext(), myClass.get(0).getSubject(), Toast.LENGTH_SHORT).show();
 
-        adapter = new PaymentAdapter(options, MyPaymentsActivity.this);
-
-        RecyclerView recyclerView = findViewById(R.id.payments_recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        adapter.stopListening();
+                adapter = new PaymentAdapter(getApplicationContext(),myClass,MyPaymentsActivity.this);
+                RecyclerView recyclerView = findViewById(R.id.payments_recycler_view);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(MyPaymentsActivity.this));
+                recyclerView.setAdapter(adapter);
+            }
+            @Override
+            public void onFailure(Call<ArrayList<Class>> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
     }
 
     @Override

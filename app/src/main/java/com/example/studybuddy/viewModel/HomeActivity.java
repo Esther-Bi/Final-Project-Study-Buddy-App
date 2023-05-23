@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.studybuddy.R;
 import com.example.studybuddy.adapter.ClassAdapter;
+import com.example.studybuddy.adapter.StudentClassAdapter;
 import com.example.studybuddy.model.HomeModel;
 import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Class;
@@ -31,6 +32,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.AggregateQuery;
 import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,56 +59,28 @@ public class HomeActivity extends AppCompatActivity implements RecyclerViewInter
     }
 
     private void setUpRecyclerView() {
-//        Call<Query> call = RetrofitClient.getInstance().getAPI().getClassQuery(model.userID);
-//        call.enqueue(new Callback<Query>() {
-//            @Override
-//            public void onResponse(Call<Query> call, Response<Query> response) {
-//                Query query = response.body();
-//                Log.d("check meeee", query.toString());
-//                FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()
-//                        .setQuery(query, Class.class)
-//                        .build();
-//                Log.d("check meeeeeeeeee", query.toString());
-//
-//                adapter = new ClassAdapter(options, HomeActivity.this);
-//
-//                RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
-//                recyclerView.setHasFixedSize(true);
-//                recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
-//                recyclerView.setAdapter(adapter);
-//                adapter.startListening();
-//            }
-//            @Override
-//            public void onFailure(Call<Query> call, Throwable t) {
-//                Log.d("failed phone", t.getMessage());
-//            }
-//        });
 
-        Query query = model.buildClassQuery("teacher");
-        FirestoreRecyclerOptions<Class> options = new FirestoreRecyclerOptions.Builder<Class>()
-                .setQuery(query, Class.class)
-                .build();
-        Log.d("check meeeeeeeeee", query.toString());
+        Call<ArrayList<Class>> call = RetrofitClient.getInstance().getAPI().getMyClasses(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        call.enqueue(new Callback<ArrayList<Class>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Class>> call, Response<ArrayList<Class>> response) {
+                ArrayList<Class> myClass = response.body();
+                if (myClass == null){
+                    myClass = new ArrayList<Class>();
+                }
+                Toast.makeText(getApplicationContext(), myClass.get(0).getSubject(), Toast.LENGTH_SHORT).show();
 
-        adapter = new ClassAdapter(options, HomeActivity.this);
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        adapter.startListening();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        adapter.startListening();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-//        adapter.stopListening();
+                adapter = new ClassAdapter(getApplicationContext(),myClass,HomeActivity.this);
+                RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(HomeActivity.this));
+                recyclerView.setAdapter(adapter);
+            }
+            @Override
+            public void onFailure(Call<ArrayList<Class>> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
     }
 
     @Override

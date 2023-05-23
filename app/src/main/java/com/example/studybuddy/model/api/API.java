@@ -3,6 +3,8 @@ package com.example.studybuddy.model.api;
 import com.example.studybuddy.objects.Group;
 import com.example.studybuddy.objects.Student;
 import com.example.studybuddy.objects.Teacher;
+import com.example.studybuddy.objects.Class;
+
 
 import java.util.ArrayList;
 
@@ -291,5 +293,25 @@ public interface API {
             @Field("studentName") String name,
             @Field("subject") String subject,
             @Field("date") String date
+    );
+
+    @GET("getMyClassesStudent")
+    Call<ArrayList<Class>> getMyClassesStudent(
+            @Query("uid") String uid
+    );
+
+    @GET("getMyClasses")
+    Call<ArrayList<Class>> getMyClasses(
+            @Query("uid") String uid
+    );
+
+    @GET("getClassPayments")
+    Call<ArrayList<Class>> getClassPayments(
+            @Query("uid") String uid
+    );
+
+    @GET("getClassPaymentsStudent")
+    Call<ArrayList<Class>> getClassPaymentsStudent(
+            @Query("uid") String uid
     );
 }
