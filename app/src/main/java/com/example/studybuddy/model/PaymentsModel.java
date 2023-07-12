@@ -2,6 +2,9 @@ package com.example.studybuddy.model;
 
 import static java.lang.Integer.parseInt;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -81,6 +84,42 @@ public class PaymentsModel {
         });
     }
 
+    public void onWhatsAppMessageClick(String name, String subject, String date) {
+        Call<String> call = RetrofitClient.getInstance().getAPI().getStudentMobileNumber(userID, name, subject, date);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                String mobile_number = response.body();
+                openWhatsApp(mobile_number);
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.d("failed phone", t.getMessage());
+            }
+        });
+    }
+
+    private void openWhatsApp(String mobile_number){
+        boolean installed = appInstalledOrNot("com.whatsapp");
+        if (installed){
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData ( Uri.parse ( "https://wa.me/" + "+972" + mobile_number + "/?text=" + "" ) );
+            this.activity.startActivity(intent);
+        } else {
+            Toast.makeText(this.activity.getApplicationContext(), "whatsApp is not installed on this device", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean appInstalledOrNot(String url){
+        boolean app_installed;
+        try{
+            this.activity.getPackageManager().getPackageInfo(url, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
+    }
 
     public void click_yes(String studentName, String subject, String date) {
         Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().deletePaidClass(userID, studentName, subject, date);
@@ -88,7 +127,8 @@ public class PaymentsModel {
             @Override
             public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
-                    Log.d("done", "done");
+                    Log.d("deletePaidClass", "done");
+                    activity.setUpRecyclerView();
                     Toast.makeText(activity, "paid successfully", Toast.LENGTH_SHORT).show();
                 }
             }

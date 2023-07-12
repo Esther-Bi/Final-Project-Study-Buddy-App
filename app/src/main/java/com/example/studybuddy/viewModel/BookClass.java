@@ -17,9 +17,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studybuddy.R;
@@ -33,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import retrofit2.Call;
@@ -139,7 +144,7 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
             @Override
             public boolean onQueryTextChange(String s)
             {
-                model.modelonQueryTextChange(s);
+                model.modelOnQueryTextChange(s);
 
                 TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, model.getFilteredTeachers());
                 adapter.notifyDataSetChanged();
@@ -151,7 +156,8 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
     }
 
     private void setupData() {
-        model.modelsetupData();
+        model.beforeSetUpData();
+//        model.modelSetupData();
 
     }
 
@@ -171,10 +177,88 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l)
             {
                 Teacher selectTeacher = (Teacher) (listView.getItemAtPosition(position));
+                popupInfoOrBook(selectTeacher);
+//                Intent intent = new Intent(getApplicationContext(), DetailActivityTeacher.class);
+//
+//                intent.putExtra("id",selectTeacher);
+//                startActivity(intent);
+            }
+        });
+    }
+
+    private void popupInfoOrBook(Teacher currentTeacher) {
+        AlertDialog.Builder dialogBuilder;
+        AlertDialog dialog;
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.info_or_book_popup, null);
+
+        ImageButton info = (ImageButton) popupView.findViewById(R.id.popup_info);
+        ImageButton book = (ImageButton) popupView.findViewById(R.id.popup_book);
+
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                openTeacherDetails(currentTeacher);
+            }
+        });
+
+        book.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
                 Intent intent = new Intent(getApplicationContext(), DetailActivityTeacher.class);
 
-                intent.putExtra("id",selectTeacher);
+                intent.putExtra("id",currentTeacher);
                 startActivity(intent);
+            }
+        });
+    }
+
+    public void openTeacherDetails(Teacher currentTeacher) {
+        AlertDialog.Builder dialogBuilder;
+        AlertDialog dialog;
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.teacher_details_popup, null);
+
+        TextView name = popupView.findViewById(R.id.popup_name);
+        TextView degree = popupView.findViewById(R.id.popup_degree);
+        TextView grade = popupView.findViewById(R.id.popup_grade);
+        RatingBar rating = popupView.findViewById(R.id.popup_rating);
+        TextView age = popupView.findViewById(R.id.popup_age);
+        ImageButton popup_close = (ImageButton) popupView.findViewById(R.id.popup_teacher_details_close);
+        ImageView male = popupView.findViewById(R.id.popup_teacher_details_male);
+        ImageView female = popupView.findViewById(R.id.popup_teacher_details_female);
+
+        name.setText(""+currentTeacher.getName());
+        degree.setText(""+currentTeacher.getDegree()+" , "+currentTeacher.getYear());
+        if (model.getCourseValueFromSpinner().equals("choose course")){
+            grade.setText("---");
+        } else{
+            int index = currentTeacher.getCourses().indexOf(model.getCourseValueFromSpinner());
+            grade.setText(""+currentTeacher.getGrades().get(index));
+        }
+        rating.setRating((float) currentTeacher.getRating());
+        age.setText(""+currentTeacher.getAge());
+
+        if (currentTeacher.getGender().equals("Male")) {
+            female.setVisibility(View.INVISIBLE);
+        } else {
+            male.setVisibility(View.INVISIBLE);
+        }
+
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        popup_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
         });
     }

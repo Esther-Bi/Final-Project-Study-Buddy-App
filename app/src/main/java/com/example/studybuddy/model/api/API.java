@@ -39,7 +39,6 @@ public interface API {
             @Field("name") String name,
             @Field("year") String year,
             @Field("degree") String degree,
-            @Field("gender") String gender,
             @Field("age") String age,
             @Field("phone") String phone,
             @Field("payBox") String payBox
@@ -313,5 +312,16 @@ public interface API {
     @GET("getClassPaymentsStudent")
     Call<ArrayList<Class>> getClassPaymentsStudent(
             @Query("uid") String uid
+    );
+
+    @GET("getGroupParticipants")
+    Call<ArrayList<Student>> getGroupParticipants(
+            @Query("uid") String uid,
+            @Query("gid") String gid
+    );
+
+    @POST("deletePastDates")
+    Call<ResponseBody> deletePastDates(
+
     );
 }

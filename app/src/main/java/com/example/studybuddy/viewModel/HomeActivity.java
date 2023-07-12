@@ -43,7 +43,7 @@ import retrofit2.Response;
 public class HomeActivity extends AppCompatActivity implements RecyclerViewInterface {
 
     HomeModel model = new HomeModel(this, FirebaseAuth.getInstance().getCurrentUser().getUid(), "classes", "students", "teachers");
-    private ClassAdapter adapter;
+    public ClassAdapter adapter;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
     GoogleSignInClient googleSignInClient;
@@ -58,7 +58,7 @@ public class HomeActivity extends AppCompatActivity implements RecyclerViewInter
         setUpRecyclerView();
     }
 
-    private void setUpRecyclerView() {
+    public void setUpRecyclerView() {
 
         Call<ArrayList<Class>> call = RetrofitClient.getInstance().getAPI().getMyClasses(FirebaseAuth.getInstance().getCurrentUser().getUid());
         call.enqueue(new Callback<ArrayList<Class>>() {
@@ -68,8 +68,6 @@ public class HomeActivity extends AppCompatActivity implements RecyclerViewInter
                 if (myClass == null){
                     myClass = new ArrayList<Class>();
                 }
-                Toast.makeText(getApplicationContext(), myClass.get(0).getSubject(), Toast.LENGTH_SHORT).show();
-
                 adapter = new ClassAdapter(getApplicationContext(),myClass,HomeActivity.this);
                 RecyclerView recyclerView = findViewById(R.id.recycler_view_teacher);
                 recyclerView.setHasFixedSize(true);

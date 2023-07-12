@@ -42,7 +42,14 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentHolder> {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View view) {
-                activity.onApprovePaymentForClassClick(items.get(position).getTeacherName(),items.get(position).getSubject(), items.get(position).getDate() );
+                activity.onApprovePaymentForClassClick(items.get(position).getStudentName(),items.get(position).getSubject(), items.get(position).getDate() );
+            }
+        });
+        holder.whatsapp_Button.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RestrictedApi")
+            @Override
+            public void onClick(View view) {
+                activity.onWhatsAppMessageClick(items.get(position).getStudentName(),items.get(position).getSubject(), items.get(position).getDate() );
             }
         });
     }

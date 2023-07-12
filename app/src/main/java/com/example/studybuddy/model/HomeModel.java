@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.studybuddy.model.api.RetrofitClient;
+import com.example.studybuddy.viewModel.HomeActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -21,13 +22,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeModel {
-    private Activity activity;
+    private HomeActivity activity;
     public String userID;
     private CollectionReference classesRef;
     private Query query;
 
 
-    public HomeModel(Activity activity, String userID, String classes, String students, String teachers) {
+    public HomeModel(HomeActivity activity, String userID, String classes, String students, String teachers) {
         this.activity = activity;
         this.userID = userID;
         this.classesRef = FirebaseFirestore.getInstance().collection(classes);
@@ -77,7 +78,7 @@ public class HomeModel {
             intent.setData ( Uri.parse ( "https://wa.me/" + "+972" + mobile_number + "/?text=" + "" ) );
             this.activity.startActivity(intent);
         } else {
-            Toast.makeText(this.activity.getApplicationContext(), "whatsApp not installed on this device", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.activity.getApplicationContext(), "whatsApp is not installed on this device", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -100,6 +101,8 @@ public class HomeModel {
                 if(response.isSuccessful()){
                     Log.d("done", "done");
                     Toast.makeText(activity, "class have been canceled successfully", Toast.LENGTH_SHORT).show();
+                    activity.adapter.notifyDataSetChanged();
+                    activity.setUpRecyclerView();
                 }
             }
 

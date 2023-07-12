@@ -47,7 +47,7 @@
             android:textAlignment="center"
             android:textSize="13dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/cancel_class"
             android:layout_width="140dp"
             android:layout_height="50dp"
@@ -56,9 +56,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="6dp"
             android:text="cancel class"
+            android:src="@drawable/ic_baseline_delete_24"
             android:textSize="9dp" />
 
-        <Button
+        <ImageButton
             android:id="@+id/whatsapp_message"
             android:layout_width="140dp"
             android:layout_height="50dp"
@@ -69,6 +70,7 @@
             android:layout_alignParentStart="true"
             android:layout_toEndOf="@+id/cancel_class"
             android:text="send whatsApp message"
+            android:src="@drawable/ic_baseline_textsms_24"
             android:textSize="9dp" />
 
     </RelativeLayout>

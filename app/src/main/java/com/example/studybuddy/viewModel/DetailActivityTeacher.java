@@ -2,14 +2,21 @@ package com.example.studybuddy.viewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.studybuddy.R;
 import com.example.studybuddy.model.DetailTeacherModel;
@@ -25,7 +32,7 @@ public class DetailActivityTeacher extends AppCompatActivity implements AdapterV
     private Spinner coursesSpinner, datesSpinner;
 
     String courseValueFromSpinner, dateValueFromSpinner;
-    private Button bookClass;
+    private Button bookClass, teacherDetails, back;
 
     String teacherID;
     String[] classes;
@@ -50,6 +57,8 @@ public class DetailActivityTeacher extends AppCompatActivity implements AdapterV
         coursesSpinner = findViewById(R.id.coursesSpinner);
         datesSpinner = findViewById(R.id.datesSpinner);
         bookClass = findViewById(R.id.bookClass);
+        back = findViewById(R.id.backToBook);
+        teacherDetails = findViewById(R.id.teacherDetails);
 
         coursesSpinner.setOnItemSelectedListener(this);
         datesSpinner.setOnItemSelectedListener(this);
@@ -71,7 +80,14 @@ public class DetailActivityTeacher extends AppCompatActivity implements AdapterV
 
         bookClass.setOnClickListener(v -> {
             model.bookClass(classes, courseValueFromSpinner, prices,currentTeacher, dateValueFromSpinner, teacherID);
+        });
 
+        back.setOnClickListener(v -> {
+            super.finish();
+        });
+
+        teacherDetails.setOnClickListener(v -> {
+            openTeacherDetails();
         });
     }
 
@@ -100,4 +116,46 @@ public class DetailActivityTeacher extends AppCompatActivity implements AdapterV
         startActivity(new Intent(DetailActivityTeacher.this, BookClass.class));
         finish();
     }
+
+    public void openTeacherDetails() {
+        AlertDialog.Builder dialogBuilder;
+        AlertDialog dialog;
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View popupView = getLayoutInflater().inflate(R.layout.teacher_details_popup, null);
+
+        TextView name = popupView.findViewById(R.id.popup_name);
+        TextView degree = popupView.findViewById(R.id.popup_degree);
+        TextView grade = popupView.findViewById(R.id.popup_grade);
+        RatingBar rating = popupView.findViewById(R.id.popup_rating);
+        TextView age = popupView.findViewById(R.id.popup_age);
+        ImageButton popup_close = (ImageButton) popupView.findViewById(R.id.popup_teacher_details_close);
+        ImageView male = popupView.findViewById(R.id.popup_teacher_details_male);
+        ImageView female = popupView.findViewById(R.id.popup_teacher_details_female);
+
+        name.setText(""+currentTeacher.getName());
+        degree.setText(""+currentTeacher.getDegree()+" , "+currentTeacher.getYear());
+        int index_of_course = Arrays.asList(classes).indexOf(courseValueFromSpinner);
+        grade.setText(""+currentTeacher.getGrades().get(index_of_course));
+        rating.setRating((float) currentTeacher.getRating());
+        age.setText(""+currentTeacher.getAge());
+
+        if (currentTeacher.getGender().equals("Male")) {
+            female.setVisibility(View.INVISIBLE);
+        } else {
+            male.setVisibility(View.INVISIBLE);
+        }
+
+        dialogBuilder.setView(popupView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        popup_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+
 }

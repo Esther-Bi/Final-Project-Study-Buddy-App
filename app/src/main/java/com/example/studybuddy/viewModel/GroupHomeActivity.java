@@ -5,7 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -13,6 +17,7 @@ import com.example.studybuddy.R;
 import com.example.studybuddy.adapter.GroupAdapter;
 import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Group;
+import com.example.studybuddy.objects.Student;
 import com.example.studybuddy.objects.Teacher;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -26,6 +31,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,11 +41,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -85,7 +96,6 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
                 if (myGroups == null){
                     myGroups = new ArrayList<Group>();
                 }
-                Toast.makeText(getApplicationContext(), myGroups.get(0).getSubject(), Toast.LENGTH_SHORT).show();
                 recyclerView.setLayoutManager(new LinearLayoutManager(GroupHomeActivity.this));
                 adapter = new GroupAdapter(getApplicationContext(),myGroups, GroupHomeActivity.this);
                 recyclerView.setAdapter(adapter);
@@ -207,10 +217,37 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
         });
     }
 
+    private boolean appInstalledOrNot(String url){
+        boolean app_installed;
+        try{
+            this.getPackageManager().getPackageInfo(url, PackageManager.GET_ACTIVITIES);
+            app_installed = true;
+        } catch (PackageManager.NameNotFoundException e) {
+            app_installed = false;
+        }
+        return app_installed;
+    }
+
     public void openWhatsapp(String link){
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-        startActivity(browserIntent);
-        finish();
+        boolean installed = appInstalledOrNot("com.whatsapp");
+        if (installed){
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
+            startActivity(browserIntent);
+            finish();
+        } else {
+            Toast.makeText(this.getApplicationContext(), "whatsApp not installed on this device", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openPrivateWhatsApp(String mobile_number){
+        boolean installed = appInstalledOrNot("com.whatsapp");
+        if (installed){
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData ( Uri.parse ( "https://wa.me/" + "+972" + mobile_number + "/?text=" + "Hi! I'm from StudyBuddy app (:" ) );
+            GroupHomeActivity.this.startActivity(intent);
+        } else {
+            Toast.makeText(GroupHomeActivity.this.getApplicationContext(), "whatsApp not installed on this device", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -227,7 +264,7 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
                 startActivity(new Intent(GroupHomeActivity.this, GroupHomeActivity.class));
                 return true;
             case R.id.action_edit_profile:
-                //startActivity(new Intent(AddGroupActivity.this, GroupProfileActivity.class));
+                startActivity(new Intent(GroupHomeActivity.this, GroupProfileActivity.class));
                 finish();
                 return true;
             case R.id.action_search_group:
@@ -277,5 +314,85 @@ public class GroupHomeActivity extends AppCompatActivity implements AdapterView.
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+
+    public void popUpParticipants(String groupId) {
+        Dialog dialog;
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.participants_popup);
+        dialog.getWindow().setLayout(800,1500);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.search_participant);
+        ListView listView = dialog.findViewById(R.id.search_participant_list_view);
+        ImageButton close = dialog.findViewById(R.id.close_Button);
+
+        ArrayList<String> names = new ArrayList<>();
+        HashMap<String,String> name_mobile = new HashMap<>();
+
+        Call<ArrayList<Student>> call = RetrofitClient.getInstance().getAPI().getGroupParticipants(FirebaseAuth.getInstance().getCurrentUser().getUid(), groupId);
+        call.enqueue(new Callback<ArrayList<Student>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Student>> call, Response<ArrayList<Student>> response) {
+                ArrayList<Student> participants = response.body();
+                names.add("You");
+                if (participants == null){
+                    participants = new ArrayList<Student>();
+                }
+                for (int i=0 ; i<participants.size() ; i++){
+                    String name = participants.get(i).getName();
+                    names.add(name);
+                    name_mobile.put(name,participants.get(i).getPhone());
+                }
+                ArrayAdapter<String> participantsAdapter = new ArrayAdapter<String>(GroupHomeActivity.this,
+                        android.R.layout.simple_list_item_1,
+                        names);
+
+                listView.setAdapter(participantsAdapter);
+
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        participantsAdapter.getFilter().filter(s);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String name = participantsAdapter.getItem(position).toString();
+                        //Toast.makeText(GroupHomeActivity.this, ""+position, Toast.LENGTH_SHORT).show();
+                        //participants.get(position).getPhone();
+                        if (!name.equals("You")){
+                            String mobile = name_mobile.get(name);
+                            openPrivateWhatsApp(mobile);
+                            dialog.dismiss();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Student>> call, Throwable t) {
+                Log.d("Fail", t.getMessage());
+            }
+        });
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
     }
 }

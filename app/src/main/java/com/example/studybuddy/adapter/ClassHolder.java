@@ -1,8 +1,7 @@
 package com.example.studybuddy.adapter;
 
-import android.annotation.SuppressLint;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +13,7 @@ public class ClassHolder extends RecyclerView.ViewHolder {
     TextView studentName;
     TextView subject;
     TextView date;
-    Button cancel_class, whatsapp_message;
+    ImageButton cancel_class, whatsapp_message;
 
 
     public ClassHolder(View itemView) {

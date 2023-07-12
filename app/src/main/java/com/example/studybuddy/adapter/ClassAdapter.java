@@ -54,14 +54,14 @@ public ClassAdapter(Context context, List<Class> items, HomeActivity activity) {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View view) {
-                activity.onWhatsAppMessageClick(items.get(position).getTeacherName(),items.get(position).getSubject(), items.get(position).getDate() );
+                activity.onWhatsAppMessageClick(items.get(position).getStudentName(),items.get(position).getSubject(), items.get(position).getDate() );
             }
         });
         holder.cancel_class.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View view) {
-                activity.onCancelClassClick(items.get(position).getTeacherName(),items.get(position).getSubject(), items.get(position).getDate() );
+                activity.onCancelClassClick(items.get(position).getStudentName(),items.get(position).getSubject(), items.get(position).getDate() );
             }
         });
     }

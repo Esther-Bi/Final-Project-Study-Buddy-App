@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -47,6 +48,7 @@ import retrofit2.Response;
 
 public class StudentProfileActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+
     StudentProfileModel model = new StudentProfileModel(this);
 
     EditText name, age, phone_number;
@@ -55,6 +57,10 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
     Button save;
     RadioGroup gender_group;
     RadioButton gender;
+    ImageView gender_image, female_icon, male_icon;
+    public ArrayAdapter<CharSequence> yearSpinnerAdapter;
+    public String value = "second";
+
 
     Dialog dialogDegree;
     String degreeText = "Select Degree", yearText;
@@ -67,6 +73,11 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_profile);
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            value = extras.getString("KEY");
+        }
+
         googleSignInClient= model.googleSignInClient();
 
         name = findViewById(R.id.name);
@@ -76,11 +87,22 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
         phone_number = findViewById(R.id.phone);
         save = findViewById(R.id.save);
         gender_group = findViewById(R.id.gender_group);
+        gender_image = findViewById(R.id.gender_image);
+        female_icon = findViewById(R.id.female_icon);
+        male_icon = findViewById(R.id.male_icon);
+
+        if (value.equals("second")){
+            gender_group.setVisibility(View.GONE);
+            gender_image.setVisibility(View.GONE);
+        } else {
+            female_icon.setVisibility(View.GONE);
+            male_icon.setVisibility(View.GONE);
+        }
 
         ArrayAdapter<CharSequence> degreesSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.degrees, android.R.layout.simple_spinner_item);
         year.setOnItemSelectedListener(this);
-        ArrayAdapter<CharSequence> yearSpinnerAdapter = ArrayAdapter.createFromResource(this,
+        yearSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.years, android.R.layout.simple_spinner_item);
         yearSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         year.setAdapter(yearSpinnerAdapter);
@@ -129,26 +151,29 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
         //onclick listener for updating profile button
         save.setOnClickListener(v -> {
             //Converting fields to text
-            int radioID = gender_group.getCheckedRadioButtonId();
-            if (radioID == -1) {
-                Toast.makeText(StudentProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
-            } else {
-                gender = findViewById(radioID);
-                String textGender = gender.getText().toString();
-                String textAge = age.getText().toString();
-                String textName = name.getText().toString();
-                String textDegree = degree.getText().toString();
-                String textYear = yearText;
-                String textPhone = phone_number.getText().toString();
-
-                if (TextUtils.isEmpty(textName) || TextUtils.isEmpty(textDegree) || TextUtils.isEmpty(textYear) || TextUtils.isEmpty(textGender) || TextUtils.isEmpty(textAge) || TextUtils.isEmpty(textPhone)) {
+            String textGender = "gender";
+            if (value.equals("first")){
+                int radioID = gender_group.getCheckedRadioButtonId();
+                if (radioID == -1) {
                     Toast.makeText(StudentProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
-                }else if (textPhone.length() != 9){
-                    Toast.makeText(StudentProfileActivity.this, "phone number is illegal", Toast.LENGTH_SHORT).show();
                 } else {
-                    updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone);
-                    startActivity(new Intent(this, StudentHomeActivity.class));
+                    gender = findViewById(radioID);
+                    textGender = gender.getText().toString();
                 }
+            }
+            String textAge = age.getText().toString();
+            String textName = name.getText().toString();
+            String textDegree = degree.getText().toString();
+            String textYear = yearText;
+            String textPhone = phone_number.getText().toString();
+
+            if (TextUtils.isEmpty(textName) || TextUtils.isEmpty(textDegree) || TextUtils.isEmpty(textYear) || TextUtils.isEmpty(textGender) || TextUtils.isEmpty(textAge) || TextUtils.isEmpty(textPhone)) {
+                Toast.makeText(StudentProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
+            }else if (textPhone.length() != 9){
+                Toast.makeText(StudentProfileActivity.this, "phone number is illegal", Toast.LENGTH_SHORT).show();
+            } else {
+                updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone);
+                startActivity(new Intent(this, StudentHomeActivity.class));
             }
         });
     }
@@ -156,7 +181,7 @@ public class StudentProfileActivity extends AppCompatActivity implements Adapter
     @Override
     protected void onStart(){
         super.onStart();
-        model.modelOnStart(name, age, year, degree, phone_number, StudentProfileActivity.this);
+        model.modelOnStart(name, age, year, degree, phone_number, female_icon, male_icon, StudentProfileActivity.this);
     }
 
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone) {

@@ -10,6 +10,7 @@ android:layout_height="120dp">
         android:id="@+id/teacherName"
         android:gravity="center_vertical"
         android:text="teacher name"
+        android:fontFamily="casual"
         android:textSize="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"/>

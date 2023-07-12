@@ -1,24 +1,22 @@
 package com.example.studybuddy.model;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Student;
-import com.example.studybuddy.viewModel.MainActivity;
 import com.example.studybuddy.viewModel.StudentProfileActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -40,7 +38,7 @@ public class StudentProfileModel {
         return GoogleSignIn.getClient(this.activity, GoogleSignInOptions.DEFAULT_SIGN_IN);
     }
 
-    public void modelOnStart(EditText name, EditText age, Spinner year, TextView degree, EditText phone_number, StudentProfileActivity thisactivity) {
+    public void modelOnStart(EditText name, EditText age, Spinner year, TextView degree, EditText phone_number, ImageView female_icon, ImageView male_icon, StudentProfileActivity thisactivity) {
 
         Call<Student> call = RetrofitClient.getInstance().getAPI().getStudentDetails(user.getUid());
         call.enqueue(new Callback<Student>() {
@@ -55,9 +53,16 @@ public class StudentProfileModel {
                 String phoneResult = curr_student.getPhone();
                 name.setText(nameResult);
                 age.setText(ageResult);
-                //year.setText(yearResult);
+                int index = thisactivity.yearSpinnerAdapter.getPosition(yearResult);
+                year.setSelection(index);
                 degree.setText(degreeResult);
                 phone_number.setText(phoneResult);
+                if (thisactivity.value.equals("second") && curr_student.getGender().equals("Male")) {
+                    female_icon.setVisibility(View.INVISIBLE);
+                }
+                if (thisactivity.value.equals("second") && curr_student.getGender().equals("Female")) {
+                    male_icon.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override

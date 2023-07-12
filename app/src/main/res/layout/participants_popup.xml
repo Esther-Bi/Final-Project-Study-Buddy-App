@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Linear layout as parent layout-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white"
+    >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Learning Group Participants"
+        android:fontFamily="casual"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        />
+
+    <!-- Edit text to allow user to type name
+           of participant he/she wants to search-->
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_participant"
+        android:hint="Search participant..."
+        android:padding="12dp"
+        android:singleLine="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/editbox_background"
+        />
+
+    <!-- List view to insert list of items-->
+    <ListView
+        android:id="@+id/search_participant_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="365dp"
+        android:dividerHeight="8sp" />
+
+    <ImageButton
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:id="@+id/close_Button"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_baseline_close_24" />
+
+</LinearLayout>

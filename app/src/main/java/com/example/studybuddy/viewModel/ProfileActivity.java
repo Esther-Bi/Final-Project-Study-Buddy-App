@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -63,7 +64,9 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
     Button save, add_courses, add_dates;
     RadioGroup gender_group;
     RadioButton gender;
+    ImageView male, female;
     Dialog dialogDegree;
+    public ArrayAdapter<CharSequence> yearSpinnerAdapter;
 //    DocumentReference documentReference;
     FirebaseFirestore db = model.getDb();
     String degreeText = "Select Degree", yearText;
@@ -100,16 +103,19 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
         year = findViewById(R.id.year);
         phone_number = findViewById(R.id.phone);
         pay_box = findViewById(R.id.pay_box);
+        male = findViewById(R.id.male);
+        female = findViewById(R.id.female);
 
         save = findViewById(R.id.save);
-        gender_group = findViewById(R.id.gender_group);
+//        gender_group = findViewById(R.id.gender_group);
         add_courses = findViewById(R.id.add_courses);
         add_dates = findViewById(R.id.add_dates);
 
         ArrayAdapter<CharSequence> degreesSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.degrees, android.R.layout.simple_spinner_item);
         year.setOnItemSelectedListener(this);
-        ArrayAdapter<CharSequence> yearSpinnerAdapter = ArrayAdapter.createFromResource(this,
+        //ArrayAdapter<CharSequence>
+        yearSpinnerAdapter = ArrayAdapter.createFromResource(this,
                 R.array.years, android.R.layout.simple_spinner_item);
         yearSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         year.setAdapter(yearSpinnerAdapter);
@@ -168,13 +174,14 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
 
         //onclick listener for updating profile button
         save.setOnClickListener(v -> {
-            //Converting fields to text
-            int radioID = gender_group.getCheckedRadioButtonId();
-            if (radioID == -1) {
-                Toast.makeText(ProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
-            } else {
-                gender = findViewById(radioID);
-                String textGender = gender.getText().toString();
+//            //Converting fields to text
+//            int radioID = gender_group.getCheckedRadioButtonId();
+//            if (radioID == -1) {
+//                Toast.makeText(ProfileActivity.this, "Empty Credentials!", Toast.LENGTH_SHORT).show();
+//            } else {
+//                gender = findViewById(radioID);
+//                String textGender = gender.getText().toString();
+                String textGender = "gender";
                 String textAge = age.getText().toString();
                 String textName = name.getText().toString();
                 String textDegree = degree.getText().toString();
@@ -191,15 +198,15 @@ public class ProfileActivity extends AppCompatActivity implements AdapterView.On
                     updateProfile(textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox);
                     startActivity(new Intent(this, HomeActivity.class));
                 }
-            }
+            //}
         });
     }
 
     @Override
     protected void onStart(){
         super.onStart();
+        model.modelOnStart(name, age, year, degree, pay_box, phone_number, female, male, ProfileActivity.this);
 
-        model.modelOnStart(name, age, year, degree, pay_box, phone_number, ProfileActivity.this);
     }
 
     public void updateProfile(String textName, String textYear, String textDegree, String textGender, String textAge, String textPhone, String textPayBox) {

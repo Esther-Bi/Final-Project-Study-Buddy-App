@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 //import android.support.annotation.NonNull;
 //import android.support.v7.app.AppCompatActivity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -65,7 +66,7 @@ public class StudentMyPaymentActivity extends AppCompatActivity implements Recyc
 
     }
     //
-    private void setUpRecyclerView() {
+    public void setUpRecyclerView() {
         Call<ArrayList<Class>> call = RetrofitClient.getInstance().getAPI().getClassPaymentsStudent(FirebaseAuth.getInstance().getCurrentUser().getUid());
         call.enqueue(new Callback<ArrayList<Class>>() {
             @Override
@@ -74,7 +75,6 @@ public class StudentMyPaymentActivity extends AppCompatActivity implements Recyc
                 if (myClass == null){
                     myClass = new ArrayList<Class>();
                 }
-                Toast.makeText(getApplicationContext(), myClass.get(0).getSubject(), Toast.LENGTH_SHORT).show();
 
                 adapter = new StudentPaymentAdapter(getApplicationContext(),myClass,StudentMyPaymentActivity.this);
                 RecyclerView recyclerView = findViewById(R.id.payments_recycler_view);
@@ -82,9 +82,10 @@ public class StudentMyPaymentActivity extends AppCompatActivity implements Recyc
                 recyclerView.setLayoutManager(new LinearLayoutManager(StudentMyPaymentActivity.this));
                 recyclerView.setAdapter(adapter);
             }
+            @SuppressLint("LongLogTag")
             @Override
             public void onFailure(Call<ArrayList<Class>> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
+                Log.d("Fail getClassPaymentsStudent", t.getMessage());
             }
         });
 //        Query query = model.buildClassQuery("student");
@@ -171,6 +172,7 @@ public class StudentMyPaymentActivity extends AppCompatActivity implements Recyc
     }
 
     public void openPayBoxApp(String pay_box) {
+        Log.d("openPayBoxApp link", pay_box);
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pay_box));
         startActivity(browserIntent);
         finish();

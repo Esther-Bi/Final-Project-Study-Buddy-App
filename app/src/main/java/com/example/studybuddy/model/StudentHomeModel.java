@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.studybuddy.model.api.RetrofitClient;
+import com.example.studybuddy.viewModel.StudentHomeActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -21,11 +22,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class StudentHomeModel {
-    private Activity activity;
+    private StudentHomeActivity activity;
     private String userID;
     private CollectionReference classesRef;
 
-    public StudentHomeModel(Activity activity, String userID, String classes) {
+    public StudentHomeModel(StudentHomeActivity activity, String userID, String classes) {
         this.activity = activity;
         this.userID = userID;
         this.classesRef = FirebaseFirestore.getInstance().collection(classes);
@@ -61,7 +62,7 @@ public class StudentHomeModel {
             intent.setData ( Uri.parse ( "https://wa.me/" + "+972" + mobile_number + "/?text=" + "" ) );
             this.activity.startActivity(intent);
         } else {
-            Toast.makeText(this.activity.getApplicationContext(), "whatsApp not installed on this device", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this.activity.getApplicationContext(), "whatsApp is not installed on this device", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -82,8 +83,10 @@ public class StudentHomeModel {
             @Override
             public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
-                    Log.d("done", "done");
+                    Log.d("deleteClassStudent", "done");
                     Toast.makeText(activity, "class have been canceled successfully", Toast.LENGTH_SHORT).show();
+                    activity.adapter.notifyDataSetChanged();
+                    activity.setUpRecyclerView();
                 }
             }
 

@@ -2,7 +2,9 @@ package com.example.studybuddy.model;
 
 import android.app.Activity;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +58,7 @@ public class ProfileModel {
         return user;
     }
 
-    public void modelOnStart(EditText name, EditText age, Spinner year, TextView degree, EditText payBox, EditText phone_number, ProfileActivity thisactivity) {
+    public void modelOnStart(EditText name, EditText age, Spinner year, TextView degree, EditText payBox, EditText phone_number, ImageView female, ImageView male, ProfileActivity thisactivity) {
         Call<Teacher> call = RetrofitClient.getInstance().getAPI().getTeacherDetails(user.getUid());
         call.enqueue(new Callback<Teacher>() {
             @Override
@@ -71,17 +73,22 @@ public class ProfileModel {
                 String phoneNumberResult = curr_teacher.getPhone();
                 name.setText(nameResult);
                 age.setText(ageResult);
-                //year.setText(yearResult);
+                int index = thisactivity.yearSpinnerAdapter.getPosition(yearResult);
+                year.setSelection(index);
                 degree.setText(degreeResult);
                 payBox.setText(payBoxResult);
                 phone_number.setText(phoneNumberResult);
+                if (curr_teacher.getGender().equals("Male")){
+                    female.setVisibility(View.INVISIBLE);
+                } else {
+                    male.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
             public void onFailure(Call<Teacher> call, Throwable t) {
                 Log.d("Fail", t.getMessage());
                 Toast.makeText(thisactivity, "no profile yet" , Toast.LENGTH_SHORT).show();
-
             }
         });
     }
@@ -109,7 +116,7 @@ public class ProfileModel {
 
         assert user != null;
 
-        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateTeacherDetails(user.getUid(), textName, textYear, textDegree, textGender, textAge, textPhone, textPayBox);
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().updateTeacherDetails(user.getUid(), textName, textYear, textDegree, textAge, textPhone, textPayBox);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {

@@ -46,16 +46,20 @@ public class StudentPaymentAdapter extends RecyclerView.Adapter<StudentPaymentHo
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View view) {
-                activity.onApprovePaymentForClassClick(items.get(position).getTeacherName(),items.get(position).getSubject(), items.get(position).getDate() );
+                activity.onApprovePaymentForClassClick(items.get(position).getTeacherName(), items.get(position).getSubject(), items.get(position).getDate());
             }
         });
         holder.pay_class.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View view) {
-                activity.onApprovePaymentForClassClick(items.get(position).getTeacherName(),items.get(position).getSubject(), items.get(position).getDate() );
+                activity.onPayForClassClick(items.get(position).getTeacherName(), items.get(position).getSubject(), items.get(position).getDate());
             }
         });
+        if (items.get(position).getStudentApproval() == 1) {
+            holder.pay_class.setVisibility(View.GONE);
+            holder.payment_confirmation.setVisibility(View.GONE);
+        }
     }
     @NonNull
     @Override

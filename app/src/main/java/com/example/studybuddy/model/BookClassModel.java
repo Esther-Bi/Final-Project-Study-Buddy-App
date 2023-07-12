@@ -2,6 +2,7 @@ package com.example.studybuddy.model;
 
 import android.app.Activity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.studybuddy.model.api.RetrofitClient;
 import com.example.studybuddy.objects.Teacher;
@@ -12,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,7 +39,7 @@ public class BookClassModel {
         return GoogleSignIn.getClient(this.activity, GoogleSignInOptions.DEFAULT_SIGN_IN);
     }
 
-    public void modelonQueryTextChange(String str) {
+    public void modelOnQueryTextChange(String str) {
 
         this.filteredTeachers = new ArrayList<Teacher>();
 
@@ -47,18 +49,37 @@ public class BookClassModel {
         }
     }
 
-    public void modelsetupData(){
+    public void beforeSetUpData(){
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().deletePastDates();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("deletePastDates", "done");
+                    modelSetupData();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail deletePastDates", t.getMessage());
+            }
+        });
+    }
+
+    public void modelSetupData(){
 
         Call<ArrayList<Teacher>> call = RetrofitClient.getInstance().getAPI().getAllTeachers();
         call.enqueue(new Callback<ArrayList<Teacher>>() {
             @Override
             public void onResponse(Call<ArrayList<Teacher>> call, Response<ArrayList<Teacher>> response) {
                 teachersList = response.body();
+                Log.d("getAllTeachers", "done");
             }
 
             @Override
             public void onFailure(Call<ArrayList<Teacher>> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
+                Log.d("Fail getAllTeachers", t.getMessage());
             }
         });
     }

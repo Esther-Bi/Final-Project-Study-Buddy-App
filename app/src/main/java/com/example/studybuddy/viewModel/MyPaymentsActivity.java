@@ -58,7 +58,7 @@ public class MyPaymentsActivity extends AppCompatActivity implements RecyclerVie
         model.updatePastCourses();
     }
 
-    private void setUpRecyclerView() {
+    public void setUpRecyclerView() {
 
         Call<ArrayList<Class>> call = RetrofitClient.getInstance().getAPI().getClassPayments(FirebaseAuth.getInstance().getCurrentUser().getUid());
         call.enqueue(new Callback<ArrayList<Class>>() {
@@ -68,7 +68,6 @@ public class MyPaymentsActivity extends AppCompatActivity implements RecyclerVie
                 if (myClass == null){
                     myClass = new ArrayList<Class>();
                 }
-                Toast.makeText(getApplicationContext(), myClass.get(0).getSubject(), Toast.LENGTH_SHORT).show();
 
                 adapter = new PaymentAdapter(getApplicationContext(),myClass,MyPaymentsActivity.this);
                 RecyclerView recyclerView = findViewById(R.id.payments_recycler_view);
@@ -142,7 +141,7 @@ public class MyPaymentsActivity extends AppCompatActivity implements RecyclerVie
 
     @Override
     public void onWhatsAppMessageClick(String name, String subject, String date) {
-
+        model.onWhatsAppMessageClick(name, subject, date);
     }
 
     @Override

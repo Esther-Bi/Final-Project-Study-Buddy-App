@@ -6,34 +6,13 @@ import android.util.Log;
 import android.widget.RatingBar;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.example.studybuddy.adapter.GroupAdapter;
 import com.example.studybuddy.model.api.RetrofitClient;
-import com.example.studybuddy.objects.Class;
-import com.example.studybuddy.objects.Group;
-import com.example.studybuddy.objects.Teacher;
-import com.example.studybuddy.viewModel.GroupHomeActivity;
 import com.example.studybuddy.viewModel.StudentMyPaymentActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -60,55 +39,65 @@ public class StudentPaymentModel {
 
     public void updatePastCourses() {
 
-//        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().PastCourses();
-//        call.enqueue(new Callback<ResponseBody>() {
-//            @Override
-//            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
-//                if(response.isSuccessful()){
-//                    Log.d("done", "done");
-//                }
-//            }
-//            @Override
-//            public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                Log.d("Fail", t.getMessage());
-//            }
-//        });
-        this.classesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        Call<ResponseBody> call = RetrofitClient.getInstance().getAPI().PastCourses();
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    if(documentSnapshot.exists()){
-                        Date date = new Date();
-                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy - HH:mm");
-                        Class current_class = documentSnapshot.toObject(Class.class);
-                        if (current_class.compare(formatter.format(date))){
-                            String dbKey = documentSnapshot.getId();
-                            classesRef.document(dbKey)
-                                    .update("past", "yes");
-                        }
-                    }
+            public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    Log.d("PastCourses", "done");
                 }
             }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("Fail PastCourses", t.getMessage());
+            }
         });
-    }
-
-    public Query buildClassQuery(String field){
-        return this.classesRef.whereEqualTo(field, this.userID).whereEqualTo("past","yes");
+//        this.classesRef.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//            @Override
+//            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+//                for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+//                    if(documentSnapshot.exists()){
+//                        Date date = new Date();
+//                        SimpleDateFormat formatter = new SimpleDateFormat("MMM dd yyyy - HH:mm");
+//                        Class current_class = documentSnapshot.toObject(Class.class);
+//                        if (current_class.compare(formatter.format(date))){
+//                            String dbKey = documentSnapshot.getId();
+//                            classesRef.document(dbKey)
+//                                    .update("past", "yes");
+//                        }
+//                    }
+//                }
+//            }
+//        });
     }
 
     public void pay_for_class(String teacherName, String subject, String date) {
-
         Call<String> call = RetrofitClient.getInstance().getAPI().payBoxLink(this.userID,teacherName,subject,date);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 String pay_box = response.body();
-                activity.openPayBoxApp(pay_box);
+                Call<String> call1 = RetrofitClient.getInstance().getAPI().approvePayment(userID,  teacherName, date, subject);
+                call1.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call1, Response<String> response1) {
+                        String getStudentApproval = response1.body();
+                        if (parseInt(getStudentApproval) == 1) {
+                            Toast.makeText(activity, "you already paid", Toast.LENGTH_SHORT).show();
+                        } else{
+                            activity.openPayBoxApp(pay_box);
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<String> call1, Throwable t1) {
+                        Log.d("Fail approvePayment", t1.getMessage());
+                    }
+                });
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
+                Log.d("Fail payBoxLink", t.getMessage());
             }
         });
     }
@@ -128,7 +117,7 @@ public class StudentPaymentModel {
             }
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
+                Log.d("Fail approvePayment", t.getMessage());
             }
         });
     }
@@ -141,12 +130,13 @@ public class StudentPaymentModel {
             public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     Toast.makeText(activity, "paid successfully", Toast.LENGTH_SHORT).show();
-                    Log.d("done", "done");
+                    Log.d("approveYes", "done");
+                    activity.setUpRecyclerView();
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
+                Log.d("Fail approveYes", t.getMessage());
             }
         });
     }
@@ -161,12 +151,12 @@ public class StudentPaymentModel {
             @Override
             public void onResponse(Call<ResponseBody>call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
-                    Log.d("done", "done");
+                    Log.d("updateRate", "done");
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("Fail", t.getMessage());
+                Log.d("Fail updateRate", t.getMessage());
             }
         });
     }
