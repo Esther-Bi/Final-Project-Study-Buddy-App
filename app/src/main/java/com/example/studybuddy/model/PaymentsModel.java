@@ -135,7 +135,7 @@ public class PaymentsModel {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("Failed to delete class", t.getMessage());
-                Toast.makeText(activity, "error in removing class", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "error in paying", Toast.LENGTH_SHORT).show();
             }
         });
     }

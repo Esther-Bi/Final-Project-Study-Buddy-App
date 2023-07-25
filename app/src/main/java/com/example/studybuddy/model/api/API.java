@@ -115,7 +115,8 @@ public interface API {
             @Query("course") String course,
             @Query("date") String date,
             @Query("from") String from,
-            @Query("to") String to
+            @Query("to") String to,
+            @Query("sortId") String sortId
     );
 
     @GET("getAllTeachers")

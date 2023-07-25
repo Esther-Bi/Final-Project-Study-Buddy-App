@@ -241,7 +241,7 @@ public class AddGroupActivity extends AppCompatActivity implements AdapterView.O
                         Toast.makeText(AddGroupActivity.this, "error in opening group", Toast.LENGTH_SHORT).show();
                     }
                 });
-                startActivity(new Intent(AddGroupActivity.this, ChooseUserActivity.class));
+                startActivity(new Intent(AddGroupActivity.this, GroupHomeActivity.class));
             }
         });
     }

@@ -20,6 +20,8 @@ import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -51,6 +53,9 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
     ListView listView;
     private Spinner coursesSpinner, fromHourSpinner, toHourSpinner;
     private Button start_filter, datesButton;
+    RadioGroup sort_group;
+    RadioButton sort;
+    String sortId = "3";
 
     private DatePickerDialog datePickerDialog;
     ArrayList<Teacher> filteredTeachers = new ArrayList<Teacher>();
@@ -69,6 +74,8 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
         fromHourSpinner = findViewById(R.id.fromHourSpinner);
         toHourSpinner = findViewById(R.id.toHourSpinner);
         start_filter = findViewById(R.id.filterFromSpinner);
+        sort_group = findViewById(R.id.sort_group);
+
 
         coursesSpinner.setOnItemSelectedListener(this);
         fromHourSpinner.setOnItemSelectedListener(this);
@@ -95,13 +102,21 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
         });
 
         setupData();
-//        setUpList();
 
         start_filter.setOnClickListener(v -> {
             if (model.getCourseValueFromSpinner().equals("choose course")){
                 Toast.makeText(this, "choose course", Toast.LENGTH_SHORT).show();
             } else {
-                initFilteredTeachers();
+                int radioID = sort_group.getCheckedRadioButtonId();
+                if (radioID == -1) {
+                    Toast.makeText(this, "no sort filter", Toast.LENGTH_SHORT).show();
+                    initFilteredTeachers();
+                }
+                else {
+                    sort = findViewById(radioID);
+                    sortId = sort.getText().toString();
+                    initFilteredTeachers();
+                }
             }
         });
 
@@ -111,7 +126,7 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
 
     private void initFilteredTeachers(){
 
-        Call<ArrayList<Teacher>> call = RetrofitClient.getInstance().getAPI().getFilteredTeachers(model.getCourseValueFromSpinner(), model.getDateValueFromButton(), model.getFromHourValueFromSpinner(), model.getToHourValueFromSpinner());
+        Call<ArrayList<Teacher>> call = RetrofitClient.getInstance().getAPI().getFilteredTeachers(model.getCourseValueFromSpinner(), model.getDateValueFromButton(), model.getFromHourValueFromSpinner(), model.getToHourValueFromSpinner(), sortId);
         call.enqueue(new Callback<ArrayList<Teacher>>() {
             @Override
             public void onResponse(Call<ArrayList<Teacher>> call, Response<ArrayList<Teacher>> response) {
@@ -157,16 +172,7 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
 
     private void setupData() {
         model.beforeSetUpData();
-//        model.modelSetupData();
-
     }
-
-//    private void setUpList() {
-//        listView = (ListView) findViewById(R.id.teachersListView);
-//        TeacherAdapter adapter = new TeacherAdapter(getApplicationContext(), 0, model.getTeachersList());
-//        adapter.notifyDataSetChanged();
-//        listView.setAdapter(adapter);
-//    }
 
 
     private void setUpOnclickListener()
@@ -178,10 +184,6 @@ public class BookClass extends AppCompatActivity implements AdapterView.OnItemSe
             {
                 Teacher selectTeacher = (Teacher) (listView.getItemAtPosition(position));
                 popupInfoOrBook(selectTeacher);
-//                Intent intent = new Intent(getApplicationContext(), DetailActivityTeacher.class);
-//
-//                intent.putExtra("id",selectTeacher);
-//                startActivity(intent);
             }
         });
     }

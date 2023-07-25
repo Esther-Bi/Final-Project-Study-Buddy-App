@@ -61,8 +61,31 @@
             android:layout_width="180dp"
             android:layout_height="50dp"
             android:id="@+id/filterFromSpinner"
-            android:layout_marginStart="100dp"
+            android:layout_marginStart="50dp"
             android:text="start filter" />
+
+        <RadioGroup
+            android:id="@+id/sort_group"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/grade"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="grade" />
+
+
+            <RadioButton
+                android:id="@+id/price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="price" />
+        </RadioGroup>
 
     </LinearLayout>
 
